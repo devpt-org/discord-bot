@@ -1,0 +1,4 @@
+Bem vindo/a <@${context.params.event.user.id}>
+Olá <@${context.params.event.user.id}>
+Ora com que então boa tarde <@${context.params.event.user.id}>
+<@${context.params.event.user.id}> Nerd alert
