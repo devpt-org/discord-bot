@@ -20,3 +20,6 @@
   . Já experimentaste compilar outra vez?
   . Já experimentaste desligar e voltar a ligar?
   . A única solução que vejo para isso é formatar...
+  . Se calhar falta um pouco de estudo de estruturas de dados. 
+  . Dúvidas de Fortran? Penso que estejas no local certo, mas nem sei ao certo...
+  . Já tentaste ver se não escreveste um ".lenght()"?
