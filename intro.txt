@@ -2,3 +2,6 @@ Bem vindo/a <@${context.params.event.user.id}>
 Olá <@${context.params.event.user.id}>
 Ora com que então boa tarde <@${context.params.event.user.id}>
 <@${context.params.event.user.id}> Nerd alert
+Bons olhos te vejam <@${context.params.event.user.id}>
+<@${context.params.event.user.id}> saca daí um abraço
+Conseguiste <@${context.params.event.user.id}>
