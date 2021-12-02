@@ -20,3 +20,14 @@
   . Já experimentaste compilar outra vez?
   . Já experimentaste desligar e voltar a ligar?
   . A única solução que vejo para isso é formatar...
+  . Já experimentaste re-escrever? 
+  . Por favor, antes de mandares logo 'preciso de ajuda', explica o teu problema.
+  . Já tentaste fazer uma pausa?
+  . E então, o trabalho na consultora hoje como foi?
+  . O bootcamp onde andaste é tão bom que vieste até cá...
+  . Será que os 6 000€ valem a pena? 
+  . Aposto que és um gordo que nem viu o sol hoje...
+  . Antes de pedires ajuda, já pesquisaste?
+  . Podes sempre ir ao stackoverflow primeiro....
+  . E essa mineradora de BTC, como vai?
+  . E essa mineradora de Dogecoin, como vai?
