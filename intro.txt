@@ -5,3 +5,6 @@ Ora com que então boa tarde <@${context.params.event.user.id}>
 Bons olhos te vejam <@${context.params.event.user.id}>
 <@${context.params.event.user.id}> saca daí um abraço
 Conseguiste <@${context.params.event.user.id}>
+Welcome to the Wired <@${context.params.event.user.id}>
+`cowsay "Buenos dias Matosinhos! Eu e o <@${context.params.event.user.id}> estamos aqui na praia. Alto sol."`
+Viva camarada <@${context.params.event.user.id}> pá
