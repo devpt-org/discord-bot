@@ -20,6 +20,7 @@
   . Já experimentaste compilar outra vez?
   . Já experimentaste desligar e voltar a ligar?
   . A única solução que vejo para isso é formatar...
+  . Já contas a partir do 0?
   . Como assim não funciona? Está a funcionar no meu PC...
   . Eu � Unicode.
   . Como tratas um bug de JavaScript? Consola-o.
