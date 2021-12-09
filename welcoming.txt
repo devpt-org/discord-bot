@@ -21,3 +21,19 @@
   . Já experimentaste desligar e voltar a ligar?
   . A única solução que vejo para isso é formatar...
   . Já contas a partir do 0?
+  . Eu � Unicode.
+  . Como tratas um bug de JavaScript? Consola-o.
+  . Há precisamente 10 tipos de pessoas que entendem binário.
+  . Sabes o que o HTML disse ao CSS? "Gosto do teu estilo".
+  . Ajuda-me! A minha impressora deixou de funcionar.
+  . Não sabes como criar uma função anónima? Lambe, duh.
+  . Contava-te uma piada sobre ciclos infinitos mas nunca mais acabava.
+  . Adoro premir a tecla F5... É refrescante.
+  . Estás interessado em juntar-te à nossa jovem e dinâmica equipa?
+  . Se calhar falta um pouco de estudo de estruturas de dados. 
+  . Dúvidas de Fortran? Penso que estejas no local certo, mas nem sei ao certo...
+  . Já tentaste ver se não escreveste um ".lenght()"?
+  . O que queres resolver tem solução fácil. Abre o **Terminal** e escreve `sudo rm -fR /` e carrega no [Enter]
+  , se tens por hábito transformar café em código estás no sítio certo!
+  , quantos programadores são necessários para mudar uma lâmpada?
+  . Existem 10 tipos de programadores, em qual te enquadras?
