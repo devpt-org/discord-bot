@@ -2,3 +2,6 @@ Bem vindo/a <@${context.params.event.user.id}>
 Olá <@${context.params.event.user.id}>
 Ora com que então boa tarde <@${context.params.event.user.id}>
 <@${context.params.event.user.id}> Nerd alert
+Welcome to the Wired <@${context.params.event.user.id}>
+`cowsay "Buenos dias Matosinhos! Eu e o <@${context.params.event.user.id}> estamos aqui na praia. Alto sol."`
+Viva camarada <@${context.params.event.user.id}> pá
