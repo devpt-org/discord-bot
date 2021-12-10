@@ -20,9 +20,9 @@
   . Já experimentaste compilar outra vez?
   . Já experimentaste desligar e voltar a ligar?
   . A única solução que vejo para isso é formatar...
-  , podes hacker o facebook por mim?
+  , podes hackear o facebook por mim?
   , error 404...
   , exception ArrayIndexOutOfBounds!
-  , Olá Mundo.
+  , olá Mundo.
   , porque é que não funciona?
   , tenta atirar o pc pela janela :)
