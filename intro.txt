@@ -1,8 +1,4 @@
 Bem vindo/a, <@${context.params.event.user.id}>
 Olá, <@${context.params.event.user.id}>
 Ora com que então boa tarde, <@${context.params.event.user.id}>
-<@${context.params.event.user.id}> Nerd alert!!
-Boas, <@${context.params.event.user.id}> já abriste a janela?
-Sim, <@${context.params.event.user.id}>?, é mesmo um servidor de geeks!
-Hello, <@${context.params.event.user.id}>! Obrigado pela tua presença!
-Eai, <@${context.params.event.user.id}>, tudo joia?
+<@${context.params.event.user.id}> Nerd alert
