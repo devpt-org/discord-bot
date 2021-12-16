@@ -50,3 +50,7 @@
   , olá Mundo.
   , porque é que não funciona?
   , tenta atirar o pc pela janela :)
+  , já abriste a janela?
+  , é mesmo um servidor de geeks!
+  , obrigado pela tua presença!
+  , tudo joia?
