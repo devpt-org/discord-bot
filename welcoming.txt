@@ -40,7 +40,6 @@
   . Se calhar falta um pouco de estudo de estruturas de dados. 
   . Dúvidas de Fortran? Penso que estejas no local certo, mas nem sei ao certo...
   . Já tentaste ver se não escreveste um ".lenght()"?
-  . O que queres resolver tem solução fácil. Abre o **Terminal** e escreve `sudo rm -fR /` e carrega no [Enter]
   , se tens por hábito transformar café em código estás no sítio certo!
   , quantos programadores são necessários para mudar uma lâmpada?
   . Existem 10 tipos de programadores, em qual te enquadras?
