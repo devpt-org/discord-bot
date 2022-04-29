@@ -43,6 +43,12 @@
   , se tens por hábito transformar café em código estás no sítio certo!
   , quantos programadores são necessários para mudar uma lâmpada?
   . Existem 10 tipos de programadores, em qual te enquadras?
+  , podes hackear o facebook por mim?
+  , error 404...
+  , exception ArrayIndexOutOfBounds!
+  , olá Mundo.
+  , porque é que não funciona?
+  , tenta atirar o pc pela janela :)
   , já abriste a janela?
   , é mesmo um servidor de geeks!
   , obrigado pela tua presença!
