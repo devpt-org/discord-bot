@@ -15,6 +15,7 @@ client.once('ready', async () => {
 client.login(DISCORD_TOKEN);
 
 client.on('guildMemberAdd', async function (member) {
+	console.log('Member joined the server!');
     const message = await welcome(member.id)
     member.guild.channels.get(DESTINATION_CHANNEL_ID).send(message)
 });
