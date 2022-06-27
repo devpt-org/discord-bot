@@ -4,9 +4,10 @@ const fs = require("fs");
 
 const { DISCORD_TOKEN } = process.env
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILDS_MEMBERS] });
 
 const DESTINATION_CHANNEL_ID = '730385705070755982' // #geral
+// const DESTINATION_CHANNEL_ID = '807190194268012554' // #comandos-testes
 
 client.once('ready', async () => {
 	console.log('Ready!');
