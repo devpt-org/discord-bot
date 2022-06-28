@@ -6,5 +6,5 @@ Bons olhos te vejam {MEMBER_ID}
 {MEMBER_ID} saca daí um abraço
 Conseguiste {MEMBER_ID}
 Welcome to the Wired {MEMBER_ID}
-`cowsay "Buenos dias Matosinhos! Eu e o {MEMBER_ID} estamos aqui na praia. Alto sol."`
+Buenos dias Matosinhos! Eu e o {MEMBER_ID} estamos aqui na praia. Alto sol
 Viva camarada {MEMBER_ID} pá
