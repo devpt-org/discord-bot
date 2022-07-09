@@ -41,7 +41,9 @@ const getRandomStringFromCollection = function (collection) {
 
 const fetchFormattedPhrases = function (filename) {
     let phrases = fs.readFileSync(filename, "utf8");
-    return phrases.split(/\r?\n/).map(item => item.replace(/^\s+|\s+$/g, '')); // replace multiple white-spaces by one white-space
+    return phrases.split(/\r?\n/)
+	    .filter(el => el) // remove empty lines (because an empty string is a falsy value)
+	    .map(item => item.replace(/^\s+|\s+$/g, '')); // replace multiple white-spaces by one white-space
 }
 
 const replacePlaceholders = function (phrases, memberID) {
