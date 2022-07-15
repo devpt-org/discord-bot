@@ -6,7 +6,7 @@ const { DISCORD_TOKEN } = process.env
 
 const JustAsk = require("./commands/JustAsk")
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
+const client = new Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES'] });
 
 const DESTINATION_CHANNEL_ID = '730385705070755982' // #geral
 // const DESTINATION_CHANNEL_ID = '807190194268012554' // #comandos-testes
@@ -23,8 +23,8 @@ client.on('guildMemberAdd', async function (member) {
     member.guild.channels.cache.get(DESTINATION_CHANNEL_ID).send(message)
 });
 
-client.on("messageCreate", (msg) => {
-    JustAsk.execute(msg)
+client.on("messageCreate", (message) => {
+    JustAsk.execute(message)
 })
 
 const welcome = async function (memberID) {
