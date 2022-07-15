@@ -1,8 +1,8 @@
 module.exports = {
     name: 'JustAsk',
     description: "Este comando é ativado sempre que alguém manda uma mensagem para o servidor",
-    execute(msg) {
-        if (msg.author.bot) return
+    execute(message) {
+        if (message.author.bot) return
 
         //Variáveis para ver individualmente todos os elementos, o {i} para o compare[] e o {n} para o mandatory[]. Depois se estes elementos estiverem na frase original (keywords), são adicionadas ao filteredCompare/filteredMandatory
         let i = 0
@@ -18,10 +18,10 @@ module.exports = {
         let mandatoryState = ""
     
         //Dá o número de pontos finais e vírgulas numa mensagem ---ainda não implementado, a usar mais tarde---
-        const totalPonctuation = msg.content.split(/[.,(){}]/).length - 1
+        const totalPonctuation = message.content.split(/[.,(){}]/).length - 1
     
         //Divide a frase para apenas ficarem palavras sem pontuação
-        const keywords = msg.content.replace(/[.,!_]/, " ").replace(/(\r\n|\n|\r)/g, " ").replace("?", " ?").toLowerCase().split(" ")
+        const keywords = message.content.replace(/[.,!_]/, " ").replace(/(\r\n|\n|\r)/g, " ").replace("?", " ?").toLowerCase().split(" ")
     
         console.log(keywords)
     
@@ -67,11 +67,11 @@ module.exports = {
     
         //Primeiro critério que defini para considerar uma pergunta "mal-feita"
         if (keywords.length < 16 && filteredCompare.length > 0 && filteredMandatory.length > 0) {       
-            msg.channel.send({ content: '👉 https://dontasktoask.com/pt-pt/', embeds: [jaEmbed] })
+            message.channel.send({ content: '👉 https://dontasktoask.com/pt-pt/', embeds: [jaEmbed] })
         }
     
         else if (keywords.length < 12 && filteredCompare.length > 0 && keywords.includes("?")) {
-            msg.channel.send({ content: '👉 https://dontasktoask.com/pt-pt/', embeds: [jaEmbed] })
+            message.channel.send({ content: '👉 https://dontasktoask.com/pt-pt/', embeds: [jaEmbed] })
         }
     
         i = 0
