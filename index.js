@@ -4,6 +4,8 @@ const fs = require("fs");
 
 const { DISCORD_TOKEN } = process.env
 
+const JustAsk = require("../commands/JustAsk")
+
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
 
 const DESTINATION_CHANNEL_ID = '730385705070755982' // #geral
