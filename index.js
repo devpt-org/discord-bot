@@ -1,8 +1,8 @@
 require('dotenv').config();
 const { Client, Intents } = require('discord.js');
-const config = { phrases:{} };
-config.phrases.intro = require('./assets/sentences/intro_phrases.json');
-config.phrases.welcoming = require('./assets/sentences/welcoming_phrases.json');
+const config = { phrases:{ } };
+config.phrases.intro = require('./assets/phrases/intro.json');
+config.phrases.welcoming = require('./assets/phrases/welcoming.json');
 
 const { DISCORD_TOKEN } = process.env;
 
