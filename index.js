@@ -21,6 +21,10 @@ client.on('guildMemberAdd', async function (member) {
     member.guild.channels.cache.get(DESTINATION_CHANNEL_ID).send(message)
 });
 
+client.on("messageCreate", (msg) => {
+    JustAsk.execute(msg)
+})
+
 const welcome = async function (memberID) {
     const introPhrases = fetchFormattedPhrases(`./assets/sentences/intro.txt`);
     const introPhrase = getRandomStringFromCollection(introPhrases).trim();
