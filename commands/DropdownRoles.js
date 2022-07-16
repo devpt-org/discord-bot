@@ -4,8 +4,8 @@ module.exports = {
     name: 'roles', 
     description: "Este comando cria um reaction role!",
     async execute(message, client) {
-        const guild = client.guilds.cache.get("811194465993097246")
-        const staffrole = guild.roles.cache.find(role => role.name === "REI") //O role do staff, para só ele poder mandar o comando !dropdown
+        const guild = client.guilds.cache.get("730385704592343083")
+        const staffrole = guild.roles.cache.find(role => role.name === "Moderador") //O role do staff, para só ele poder mandar o comando !dropdown
         const staffid = staffrole.id
         const membro = guild.members.cache.get(message.author.id)
 
