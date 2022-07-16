@@ -4,9 +4,12 @@ const fs = require("fs");
 
 const { DISCORD_TOKEN } = process.env
 
-const JustAsk = require("./commands/JustAsk")
+const DropdownRoles = require("./commands/DropdownRoles")
+const ReactionRoles = require("./listeners/ReactionRoles")
 
-const client = new Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES'] });
+const prefix = "!"
+
+const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS','GUILD_MEMBERS'] });
 
 const DESTINATION_CHANNEL_ID = '730385705070755982' // #geral
 // const DESTINATION_CHANNEL_ID = '807190194268012554' // #comandos-testes
@@ -23,8 +26,15 @@ client.on('guildMemberAdd', async function (member) {
     member.guild.channels.cache.get(DESTINATION_CHANNEL_ID).send(message)
 });
 
-client.on("messageCreate", (message) => {
-    JustAsk.execute(message)
+client.on("messageCreate", (message) => {    
+    if (message.content.startsWith(prefix)) {
+        const args = message.content.slice(prefix.length).split(/ +/);
+        const command = args.shift().toLowerCase();
+
+        if (command == "dropdown") {
+            DropdownRoles.execute(message, Discord, client)
+        }
+    }
 })
 
 const welcome = async function (memberID) {
