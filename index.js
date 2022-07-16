@@ -32,9 +32,13 @@ client.on("messageCreate", (message) => {
         const command = args.shift().toLowerCase();
 
         if (command == "dropdown") {
-            DropdownRoles.execute(message, Discord, client)
+            DropdownRoles.execute(message, client)
         }
     }
+})
+
+client.on('interactionCreate', (interaction) => {
+    ReactionRoles.execute(interaction)
 })
 
 const welcome = async function (memberID) {
