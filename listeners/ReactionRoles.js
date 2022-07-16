@@ -1,6 +1,6 @@
 module.exports = {
     name: 'roles', 
-    description: "Este comando cria um reaction role!",
+    description: "Este comando recebe as interações do reaction role!",
     async execute(interaction) {
                 
         const { values, member } = interaction
