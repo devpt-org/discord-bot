@@ -10,9 +10,9 @@ const { DISCORD_TOKEN } = process.env;
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES] });
 
 // #geral
- //const DESTINATION_CHANNEL_ID = '730385705070755982';
+ const DESTINATION_CHANNEL_ID = '730385705070755982';
 // #comandos-testes
- const DESTINATION_CHANNEL_ID = '987719981443723266';
+ //const DESTINATION_CHANNEL_ID = '987719981443723266';
 
 client.once('ready', async () => {
 	console.log('Ready!');
