@@ -3,15 +3,16 @@ const { Client, Intents } = require('discord.js');
 const config = { phrases:{ } };
 config.phrases.intro = require('./assets/phrases/intro.json');
 config.phrases.welcoming = require('./assets/phrases/welcoming.json');
+config.phrases.ja = require('./assets/phrases/ja.json');
 
 const { DISCORD_TOKEN } = process.env;
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES] });
 
 // #geral
-const DESTINATION_CHANNEL_ID = '730385705070755982';
+ //const DESTINATION_CHANNEL_ID = '730385705070755982';
 // #comandos-testes
-// const DESTINATION_CHANNEL_ID = '807190194268012554';
+ const DESTINATION_CHANNEL_ID = '987719981443723266';
 
 client.once('ready', async () => {
 	console.log('Ready!');
@@ -42,3 +43,9 @@ const replacePlaceholders = function(phrases, memberID) {
 	return phrases
 		.replace('{MEMBER_ID}', memberIdTag);
 };
+
+client.on('messageCreate',function (messages) {
+	const ja = String(config.phrases.ja);
+    if(messages.content==='!ja') 
+    messages.channel.send(ja); 
+})
