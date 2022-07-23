@@ -1,12 +1,11 @@
-name: CI
+name: Lint & test
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
-    branches: ["main"]
+    types: [opened, reopened, synchronize]
+
 jobs:
-  run-lint:
+  lint-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -14,8 +13,9 @@ jobs:
         with:
           node-version: "18"
           cache: "npm"
-      # install dependencies
-      - run: npm ci
-      # run ESLint & Prettier
-      - run: npm run lint
-      - run: npm run prettier
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Concurrently lint and test
+        run: npm exec concurrently npm:lint npm:test
