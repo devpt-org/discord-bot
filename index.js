@@ -1,12 +1,13 @@
 require('dotenv').config();
 const { Client, Intents } = require('discord.js');
+const commandHandler = require('./src/handlers/commandHandler');
 const config = { phrases:{ } };
 config.phrases.intro = require('./assets/phrases/intro.json');
 config.phrases.welcoming = require('./assets/phrases/welcoming.json');
 
 const { DISCORD_TOKEN } = process.env;
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES] });
 
 // #geral
 const DESTINATION_CHANNEL_ID = '730385705070755982';
@@ -32,6 +33,8 @@ const welcome = async function(memberID) {
 	console.log(`[NEW JOIN] ${finalPhrase}`);
 	return finalPhrase;
 };
+
+client.on('messageCreate', commandHandler());
 
 const getRandomStringFromCollection = function(collection) {
 	return collection[Math.floor(Math.random() * collection.length)].trim();
