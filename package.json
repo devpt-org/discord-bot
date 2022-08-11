@@ -1,12 +1,14 @@
 {
   "scripts": {
-    "start": "node index.js"
-  },  
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "dependencies": {
     "discord.js": "^13.8.0",
     "dotenv": "^16.0.1"
   },
   "devDependencies": {
-    "eslint": "^8.17.0"
+    "eslint": "^8.17.0",
+    "nodemon": "^2.0.19"
   }
 }
