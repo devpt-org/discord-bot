@@ -29,7 +29,7 @@ tasks:
     command: npm run start
 
 # Gitpod suggested commands to add github support to Gitpod.
-# This should make using Gitpod easier and faster. 
+# This should make using Gitpod easier and faster.
 github:
   prebuilds:
     # enable for the master/default branch (defaults to true)
