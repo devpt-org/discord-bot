@@ -12,7 +12,7 @@ const client = new Client({
 });
 
 // #geral
-const DESTINATION_CHANNEL_ID = "730385705070755982";
+const DESTINATION_CHANNEL_ID = "855861944930402344";
 // #comandos-testes
 // const DESTINATION_CHANNEL_ID = '807190194268012554';
 
