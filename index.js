@@ -4,6 +4,7 @@ const { Client, Intents } = require("discord.js");
 const config = { phrases: {} };
 config.phrases.intro = require("./assets/phrases/intro.json");
 config.phrases.welcoming = require("./assets/phrases/welcoming.json");
+config.phrases.ja = require('./assets/phrases/ja.json');
 
 const { DISCORD_TOKEN } = process.env;
 
@@ -42,3 +43,9 @@ client.on("guildMemberAdd", async (member) => {
   const message = await welcome(member.id);
   member.guild.channels.cache.get(DESTINATION_CHANNEL_ID).send(message);
 });
+
+client.on('messageCreate',function (messages) {
+	const ja = String(config.phrases.ja);
+    if(messages.content==='!ja') 
+    messages.channel.send(ja); 
+})
