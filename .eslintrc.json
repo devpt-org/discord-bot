@@ -10,5 +10,12 @@
       // https://github.com/DRD4-7R/eslint-config-7r-building/issues/1
       "version": "999.999.999"
     }
+  },
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "plugins": ["@babel/plugin-syntax-import-assertions"]
+    }
   }
 }
