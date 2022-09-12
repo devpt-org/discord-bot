@@ -4,13 +4,11 @@ const { Client, Intents } = require("discord.js");
 const config = { phrases: {} };
 config.phrases.intro = require("./assets/phrases/intro.json");
 config.phrases.welcoming = require("./assets/phrases/welcoming.json");
-config.phrases.ja = require("./assets/phrases/ja.json");
-config.phrases.oc = require("./assets/phrases/oc.json");
 
 const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS],
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
 // #geral
@@ -46,8 +44,14 @@ client.on("guildMemberAdd", async (member) => {
 });
 
 client.on("messageCreate", (messages) => {
-  const ja = String(config.phrases.ja);
-  const oc = String(config.phrases.oc);
-  if (messages.content === "!ja") messages.channel.send(ja);
-  if (messages.content === "!oc") messages.channel.send(oc);
+  switch (messages.content) {
+    case "!ja":
+      messages.channel.send(":point_right: https://dontasktoask.com/pt-pt/");
+      break;
+    case "!oc":
+      messages.channel.send(":warning: Este servidor é APENAS para questões relacionadas com programação! :warning:");
+      break;
+
+    // no default
+  }
 });
