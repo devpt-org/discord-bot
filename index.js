@@ -4,8 +4,8 @@ const { Client, Intents } = require("discord.js");
 const config = { phrases: {} };
 config.phrases.intro = require("./assets/phrases/intro.json");
 config.phrases.welcoming = require("./assets/phrases/welcoming.json");
-config.phrases.ja = require('./assets/phrases/ja.json');
-config.phrases.oc = require('./assets/phrases/oc.json');
+config.phrases.ja = require("./assets/phrases/ja.json");
+config.phrases.oc = require("./assets/phrases/oc.json");
 
 const { DISCORD_TOKEN } = process.env;
 
@@ -45,11 +45,9 @@ client.on("guildMemberAdd", async (member) => {
   member.guild.channels.cache.get(DESTINATION_CHANNEL_ID).send(message);
 });
 
-client.on('messageCreate',function (messages) {
-	const ja = String(config.phrases.ja);
+client.on("messageCreate", (messages) => {
+  const ja = String(config.phrases.ja);
   const oc = String(config.phrases.oc);
-    if(messages.content==='!ja') 
-    messages.channel.send(ja); 
-    if(messages.content==='!oc') 
-    messages.channel.send(oc); 
-})
+  if (messages.content === "!ja") messages.channel.send(ja);
+  if (messages.content === "!oc") messages.channel.send(oc);
+});
