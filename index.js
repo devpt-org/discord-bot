@@ -8,7 +8,7 @@ config.phrases.welcoming = require("./assets/phrases/welcoming.json");
 const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS],
+  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES],
 });
 
 // #geral
@@ -41,4 +41,17 @@ client.on("guildMemberAdd", async (member) => {
   console.log("Member joined the server!");
   const message = await welcome(member.id);
   member.guild.channels.cache.get(DESTINATION_CHANNEL_ID).send(message);
+});
+
+client.on("messageCreate", (messages) => {
+  switch (messages.content) {
+    case "!ja":
+      messages.channel.send(":point_right: https://dontasktoask.com/pt-pt/");
+      break;
+    case "!oc":
+      messages.channel.send(":warning: Este servidor é APENAS para questões relacionadas com programação! :warning:");
+      break;
+
+    // no default
+  }
 });
