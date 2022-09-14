@@ -2,14 +2,16 @@
 FROM node:latest
 
 # Set the working directory
-WORKDIR /app
+RUN mkdir -p /usr/src/welcome_bot
+WORKDIR /usr/src/welcome_bot
 
 # Install app dependencies
 COPY package*.json ./
 
 RUN npm install
+RUN npm install -g nodemon
 
 COPY . .
 
 # Run the application
-CMD [ "node", "index.js" ]
+CMD [ "npm", "run","start.dev" ]
