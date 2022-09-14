@@ -5,6 +5,7 @@ const config = { phrases: {} };
 config.phrases.intro = require("./assets/phrases/intro.json");
 config.phrases.welcoming = require("./assets/phrases/welcoming.json");
 
+
 const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({
