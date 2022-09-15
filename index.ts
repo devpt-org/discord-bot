@@ -1,8 +1,9 @@
 import { GuildMember, Message, Client, Intents, TextChannel } from "discord.js";
+import introPhrases from "./assets/phrases/intro.json";
+import welcomingPhrases from "./assets/phrases/welcoming.json";
 import "dotenv/config.js";
-const { DISCORD_TOKEN } = process.env;
 
-interface IPhrases {
+interface Phrases {
   intro: Array<string>;
   welcoming: Array<string>;
 }
@@ -11,9 +12,10 @@ interface IPhrases {
 const DESTINATION_CHANNEL_ID = "1019589159020675135";
 // #comandos-testes
 // const DESTINATION_CHANNEL_ID = '807190194268012554';
-const config = { phrases: {} as IPhrases };
-config.phrases.intro = require("./assets/phrases/intro.json");
-config.phrases.welcoming = require("./assets/phrases/welcoming.json");
+
+const config = { phrases: {} as Phrases };
+config.phrases.intro = introPhrases;
+config.phrases.welcoming = welcomingPhrases;
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES],
@@ -21,7 +23,7 @@ const client = new Client({
 client.once("ready", async () => {
   console.log("Ready!");
 });
-client.login(DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN);
 
 const getRandomStringFromCollection = (collection: Array<string>) =>
   collection[Math.floor(Math.random() * collection.length)].trim();
