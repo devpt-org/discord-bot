@@ -24,7 +24,7 @@ client.once("ready", () => {
   // Buscar Pasta Commands e todos os comandos la dentro
   // eslint-disable-next-line no-new
   new WOKCommands(client, {
-    commandsDir: path.join(__dirname, "commands"),
+    commandsDir: path.join(__dirname, "src/commands"),
     showWarns: false,
     typeScript: true,
   });

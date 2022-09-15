@@ -1,7 +1,7 @@
 import { Guild, Message, User, MessageEmbed, MessageCollector } from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
 import { v4 as uuidv4 } from "uuid";
-import * as questions from "../assets/jobs/jobs.json";
+import * as questions from "../../assets/jobs/jobs.json";
 /// <summary>
 ///     JOBS COMMAND
 ///     Criar classificados mais organizados obedecendo um layout fixo
