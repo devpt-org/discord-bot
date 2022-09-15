@@ -21,13 +21,13 @@ const DESTINATION_CHANNEL_ID = "855861944930402344";
 
 client.once("ready", () => {
   console.log("Ready!");
+  // Buscar Pasta Commands e todos os comandos la dentro
   // eslint-disable-next-line no-new
   new WOKCommands(client, {
     commandsDir: path.join(__dirname, "commands"),
     showWarns: false,
   });
 });
-
 client.login(DISCORD_TOKEN);
 
 const getRandomStringFromCollection = (collection) => collection[Math.floor(Math.random() * collection.length)].trim();
@@ -36,7 +36,6 @@ const replacePlaceholders = (phrases, memberID) => {
   const memberIdTag = `<@${memberID}>`;
   return phrases.replace("{MEMBER_ID}", memberIdTag);
 };
-
 const welcome = async (memberID) => {
   const introPhrase = getRandomStringFromCollection(config.phrases.intro).trim();
   const welcomingPhrase = getRandomStringFromCollection(config.phrases.welcoming).trim();

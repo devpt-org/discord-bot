@@ -1,6 +1,9 @@
 const uuid = require("uuid");
 const questions = require("../assets/jobs/jobs.json");
-
+/// <summary>
+///     JOBS COMMAND
+///     Criar classificados mais organizados obedecendo um layout fixo
+/// </summary>
 module.exports = {
   callback: (message) => {
     // Cria Canal Com Apenas acesso ao  que mandou o comando
@@ -22,13 +25,13 @@ module.exports = {
         let counter = 0;
         const answers = [];
         // Mensagem Inicial Canal Privado
-        channel.send(`${message.user.toString()}, Por favor responda as perguntas abaixo para criar um novo job.`);
+        channel.send(`${message.user.toString()}, Por favor responda as perguntas abaixo para criar um novo anúncio.`);
 
         // Inicializar Colector de Respostas
         const collector = channel.createMessageCollector({
           time: 1000 * 300, // 5m await
         });
-
+        // Enviar Questões
         channel.send(questions[counter]);
         collector.on("collect", (m) => {
           if (m.author.id === message.user.id) {
@@ -42,11 +45,13 @@ module.exports = {
             m.channel.send(questions[counter]);
           }
         });
+        // Gerar Embed com a informação do pedido
         collector.on("end", (collected) => {
           if (collected.size <= questions.length) {
             channel.delete();
             return;
           }
+          // Embed Info
           const exampleEmbed = {
             color: 0x0099ff,
             title: answers[0],
@@ -92,7 +97,7 @@ module.exports = {
               icon_url: message.guild.iconURL(),
             },
           };
-
+          // Gerar Thread para seguimento da proposta
           message.channel
             .send({ embeds: [exampleEmbed] })
             .then((m) => {
@@ -105,6 +110,7 @@ module.exports = {
               });
             })
             .then(() => {
+              // Delete do channel temporário
               channel.delete();
             });
         });
