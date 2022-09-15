@@ -70,8 +70,8 @@ export default {
             counter++;
             // Parar de recolher informação caso o utilizador tenha respondido a todas as perguntas.
             if (counter === Object.keys(questions).length - 1) {
-              console.log("stop");
               collector.stop();
+              console.log("JOBS COMMAND - Collector stopped");
               return;
             }
             m.channel.send(questions[counter]).catch((err) => {
