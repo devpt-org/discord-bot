@@ -3,7 +3,7 @@ const WOKCommands = require("wokcommands");
 const path = require("path");
 
 const { Client, Intents } = require("discord.js");
-//const Jobs = require("./commands/jobs.js");
+
 const config = { phrases: {} };
 config.phrases.intro = require("./assets/phrases/intro.json");
 config.phrases.welcoming = require("./assets/phrases/welcoming.json");
@@ -21,6 +21,7 @@ const DESTINATION_CHANNEL_ID = "855861944930402344";
 
 client.once("ready", () => {
   console.log("Ready!");
+  // eslint-disable-next-line no-new
   new WOKCommands(client, {
     commandsDir: path.join(__dirname, "commands"),
     showWarns: false,
@@ -57,6 +58,8 @@ client.on("messageCreate", (messages) => {
       break;
     case "!oc":
       messages.channel.send(":warning: Este servidor é APENAS para questões relacionadas com programação! :warning:");
+      break;
+    default:
       break;
   }
 });

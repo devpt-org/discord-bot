@@ -1,8 +1,9 @@
-const questions = require("../assets/jobs/jobs.json");
 const uuid = require("uuid");
+const questions = require("../assets/jobs/jobs.json");
+
 module.exports = {
   callback: (message) => {
-    //Cria Canal Com Apenas acesso ao  que mandou o comando
+    // Cria Canal Com Apenas acesso ao  que mandou o comando
     message.guild.channels
       .create(uuid.v4(), {
         type: "text",
@@ -18,22 +19,23 @@ module.exports = {
         ],
       })
       .then((channel) => {
-        var counter = 0;
-        var answers = [];
-        //Mensagem Inicial Canal Privado
-        channel.send(message.user.toString() + ", Por favor responda as perguntas abaixo para criar um novo job.");
+        let counter = 0;
+        const answers = [];
+        // Mensagem Inicial Canal Privado
+        channel.send(`${message.user.toString()}, Por favor responda as perguntas abaixo para criar um novo job.`);
 
-        //Inicializar Colector de Respostas
+        // Inicializar Colector de Respostas
         const collector = channel.createMessageCollector({
-          time: 1000 * 300, //5m await
+          time: 1000 * 300, // 5m await
         });
 
         channel.send(questions[counter]);
         collector.on("collect", (m) => {
-          if (m.author.id == message.user.id) {
+          if (m.author.id === message.user.id) {
             answers.push(m.content);
+            // eslint-disable-next-line no-plusplus
             counter++;
-            if (counter == questions.length) {
+            if (counter === questions.length) {
               collector.stop();
               return;
             }
@@ -49,7 +51,7 @@ module.exports = {
             color: 0x0099ff,
             title: answers[0],
             author: {
-              name: message.user.username + "#" + message.user.discriminator,
+              name: `${message.user.username}#${message.user.discriminator}`,
               icon_url: message.user.displayAvatarURL(),
             },
             description: answers[7],
@@ -93,11 +95,11 @@ module.exports = {
 
           message.channel
             .send({ embeds: [exampleEmbed] })
-            .then(function (message) {
-              message.react("👍");
-              message.react("👎");
-              message.startThread({
-                name: `${message.author.username}#${message.author.discriminator}`,
+            .then((m) => {
+              m.react("👍");
+              m.react("👎");
+              m.startThread({
+                name: `${m.author.username}#${m.author.discriminator}`,
                 autoArchiveDuration: 60,
                 type: "GUILD_PUBLIC_THREAD",
               });

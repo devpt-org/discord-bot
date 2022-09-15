@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "node index.js",
+    "start.dev": "nodemon -L --inspect=0.0.0.0 index.js",
     "lint": "eslint .",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "format": "prettier --write .",
