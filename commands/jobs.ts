@@ -1,8 +1,7 @@
-import { Guild, Message, User } from "discord.js";
+import { Guild, Message, User, MessageEmbed, MessageCollector } from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
-const uuid = require("uuid");
-const { MessageEmbed } = require("discord.js");
-const questions = require("../assets/jobs/jobs.json");
+import { v4 as uuidv4 } from "uuid";
+import * as questions from "../assets/jobs/jobs.json";
 /// <summary>
 ///     JOBS COMMAND
 ///     Criar classificados mais organizados obedecendo um layout fixo
@@ -28,20 +27,20 @@ const createEmbed = (guild: Guild, user: User, answers: string[]) => {
       { name: questions[6], value: answers[6] },
       { name: "Contacte", value: `<@${user.id}>`, inline: true }
     )
-    .setTimestamp(new Date().toISOString())
-    .setFooter({ text: guild.name, iconURL: guild.iconURL() });
+    .setTimestamp(new Date())
+    .setFooter({ text: guild.name, iconURL: guild.iconURL() || "" });
 };
 export default {
-  callback: (message: Message) => {
+  callback: (message: any) => {
     if (message.guild === null) return;
     // Cria canal apenas para o utilizador que criou o anúncio
     message.guild.channels
-      .create(uuid.v4(), {
+      .create(uuidv4(), {
         type: ChannelTypes.GUILD_TEXT,
         // Atribuir permissões apenas ao utilizador que abriu o pedido
         permissionOverwrites: [
           {
-            id: message.author.id,
+            id: message.user.id,
             allow: ["VIEW_CHANNEL", "SEND_MESSAGES"],
           },
           {
@@ -50,53 +49,54 @@ export default {
           },
         ],
       })
-      .then((channel) => {
+      .then((channel: any) => {
         let counter = 0;
         // Array de respostas
         const answers: string[] = [];
         // Mensagem inicial do canal privado
-        channel.send(
-          `${message.author.toString()}, Por favor responda as perguntas abaixo para criar um novo anúncio.`
-        );
+        channel.send(`${message.user.toString()}, Por favor responda as perguntas abaixo para criar um novo anúncio.`);
 
         // Inicializar colector de respostas
-        const collector = channel.createMessageCollector({
+        const collector: MessageCollector = channel.createMessageCollector({
           time: 1000 * 300, // Esperar 5 minutos pelas respostas
         });
         // Enviar Questões
         channel.send(questions[counter]);
         collector.on("collect", (m) => {
-          if (m.author.id === message.author.id) {
+          if (m.author.id === message.user.id) {
             // Guardar as respostas em um array
             answers.push(m.content);
             // eslint-disable-next-line no-plusplus
             counter++;
             // Parar de recolher informação caso o utilizador tenha respondido a todas as perguntas.
-            if (counter === questions.length) {
+            if (counter === Object.keys(questions).length - 1) {
+              console.log("stop");
               collector.stop();
               return;
             }
-            m.channel.send(questions[counter]);
+            m.channel.send(questions[counter]).catch((err) => {
+              console.log(err.message);
+            });
           }
         });
         collector.on("end", (collected) => {
           // Cancelar o anúncio caso o user não tenha respondido a todas as perguntas.
-          if (collected.size <= questions.length) {
+          if (collected.size <= Object.keys(questions).length - 1) {
             channel.delete();
             return;
           }
           if (message.guild === null) return;
 
           // Criar embed com a informação do pedido
-          const jobEmbed = createEmbed(message.guild, message.author, answers);
+          const jobEmbed = createEmbed(message.guild, message.user, answers);
           // Criar thread para seguimento da proposta
           message.channel
             .send({ embeds: [jobEmbed] })
-            .then((m) => {
+            .then((m: any) => {
               m.react("👍");
               m.react("👎");
               m.startThread({
-                name: `${m.author.username}#${m.author.discriminator}`,
+                name: `${message.user.username}#${message.user.discriminator}`,
                 autoArchiveDuration: 60,
               });
             })

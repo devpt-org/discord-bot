@@ -26,6 +26,7 @@ client.once("ready", () => {
   new WOKCommands(client, {
     commandsDir: path.join(__dirname, "commands"),
     showWarns: false,
+    typeScript: true,
   });
 });
 client.login(DISCORD_TOKEN);
