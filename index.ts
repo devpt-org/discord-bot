@@ -9,7 +9,9 @@ interface Phrases {
 }
 
 // #geral
-const DESTINATION_CHANNEL_ID = "1019589159020675135";
+const DESTINATION_CHANNEL_ID: string = process.env.DESTINATION_CHANNEL_ID
+  ? process.env.DESTINATION_CHANNEL_ID
+  : "855861944930402344";
 // #comandos-testes
 // const DESTINATION_CHANNEL_ID = '807190194268012554';
 
@@ -20,9 +22,7 @@ config.phrases.welcoming = welcomingPhrases;
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES],
 });
-client.once("ready", async () => {
-  console.log("Ready!");
-});
+client.once("ready", () => console.log("Ready!"));
 client.login(process.env.DISCORD_TOKEN);
 
 const getRandomStringFromCollection = (collection: Array<string>) =>
