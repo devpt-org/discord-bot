@@ -5,6 +5,8 @@ import MessageRepository from "../repository/messageRepository";
 import ChatService from "./chatService";
 import LoggerService from "./loggerService";
 
+type CallbackFunctionVariadic = (...args: unknown[]) => void;
+
 export default class CommandUseCaseResolver {
   private messageRepository: MessageRepository;
 
@@ -26,7 +28,7 @@ export default class CommandUseCaseResolver {
     this.loggerService = loggerService;
   }
 
-  resolveByCommand(command: string, context: Context): Promise<void> {
+  resolveByCommand(command: string, context: Context): void {
     this.loggerService.log(`Command received: "${command}"`);
 
     const deps = {
@@ -35,7 +37,7 @@ export default class CommandUseCaseResolver {
       loggerService: this.loggerService,
     };
 
-    const commandUseCases: Record<string, unknown> = {
+    const commandUseCases: Record<string, CallbackFunctionVariadic> = {
       "!ja": async () =>
         new SendMessageToChannelUseCase(deps).execute({
           channelId: context.channelId,
@@ -52,6 +54,6 @@ export default class CommandUseCaseResolver {
       throw new UseCaseNotFound().byCommand(command);
     }
 
-    return commandUseCases[command]();
+    commandUseCases[command]();
   }
 }
