@@ -1,8 +1,7 @@
 {
   "scripts": {
-    "start": "ts-node index.js",
-    "start.dev": "nodemon -L --inspect=0.0.0.0 index.js",
-    "lint": "eslint .",
+    "start": "ts-node index.ts",
+    "lint": "eslint . --no-error-on-unmatched-pattern",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "format": "prettier --write .",
     "prepare": "husky install"
@@ -15,6 +14,7 @@
   "devDependencies": {
     "@types/jest": "28.1.6",
     "@types/uuid": "^8.3.4",
+    "@types/node": "^18.7.18",
     "cross-env": "7.0.3",
     "eslint": "8.20.0",
     "eslint-config-airbnb": "^19.0.4",
