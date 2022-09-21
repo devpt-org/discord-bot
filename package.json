@@ -1,6 +1,7 @@
 {
   "scripts": {
     "start": "ts-node index.ts",
+    "start.dev": "nodemon",
     "lint": "eslint . --no-error-on-unmatched-pattern",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "format": "prettier --write .",
