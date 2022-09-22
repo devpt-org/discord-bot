@@ -2,6 +2,7 @@
   "scripts": {
     "build": "tsc index.ts --resolveJsonModule --esModuleInterop --skipLibCheck",
     "start": "node index.ts",
+    "start.dev": "nodemon",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
     "format": "prettier --write .",
