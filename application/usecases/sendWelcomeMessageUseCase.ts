@@ -1,12 +1,8 @@
 import LoggerService from "../../domain/service/loggerService";
 import MessageRepository from "../../domain/repository/messageRepository";
 import ChatService from "../../domain/service/chatService";
-import { ChatMember } from "../../types";
-
-// TODO: Pass to a channelResolver
-const DESTINATION_CHANNEL_ID: string = process.env.DESTINATION_CHANNEL_ID
-  ? process.env.DESTINATION_CHANNEL_ID
-  : "855861944930402344";
+import { ChatMember, ChannelSlug } from "../../types";
+import ChannelResolver from "../../domain/service/channelResolver";
 
 const replacePlaceholders = (phrases: string, memberID: string) => {
   const memberIdTag = `<@${memberID}>`;
@@ -20,18 +16,23 @@ export default class SendWelcomeMessageUseCase {
 
   private loggerService: LoggerService;
 
+  private channelResolver: ChannelResolver;
+
   constructor({
     messageRepository,
     chatService,
     loggerService,
+    channelResolver,
   }: {
     messageRepository: MessageRepository;
     chatService: ChatService;
     loggerService: LoggerService;
+    channelResolver: ChannelResolver;
   }) {
     this.messageRepository = messageRepository;
     this.chatService = chatService;
     this.loggerService = loggerService;
+    this.channelResolver = channelResolver;
   }
 
   async execute(member: ChatMember): Promise<void> {
@@ -43,6 +44,6 @@ export default class SendWelcomeMessageUseCase {
 
     this.loggerService.log(`[NEW JOIN] ${finalPhrase}`);
 
-    this.chatService.sendMessageToChannel(finalPhrase, DESTINATION_CHANNEL_ID);
+    this.chatService.sendMessageToChannel(finalPhrase, this.channelResolver.getBySlug(ChannelSlug.ENTRANCE));
   }
 }

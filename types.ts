@@ -5,3 +5,8 @@ export interface ChatMember {
 export interface Context {
   channelId: string;
 }
+
+export enum ChannelSlug {
+  ENTRANCE = "ENTRANCE",
+  JOBS = "JOBS",
+}

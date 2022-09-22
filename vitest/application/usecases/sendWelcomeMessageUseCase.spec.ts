@@ -6,6 +6,7 @@ import FileMessageRepository from "../../../infrastructure/repository/fileMessag
 import ConsoleLoggerService from "../../../infrastructure/service/consoleLoggerService";
 import { ChatMember } from "../../../types";
 import ChatService from "../../../domain/service/chatService";
+import ChannelResolver from "../../../domain/service/channelResolver";
 
 describe("send welcome message to channel use case", () => {
   beforeEach(() => {
@@ -37,6 +38,14 @@ describe("send welcome message to channel use case", () => {
         };
       },
     }));
+
+    vi.mock("../../../domain/service/channelResolver", () => ({
+      default: function mockDefault() {
+        return {
+          getBySlug: () => "855861944930402344",
+        };
+      },
+    }));
   });
 
   it("should send message to channel in chatService", async () => {
@@ -53,6 +62,7 @@ describe("send welcome message to channel use case", () => {
       messageRepository: new FileMessageRepository(),
       chatService,
       loggerService: new ConsoleLoggerService(),
+      channelResolver: new ChannelResolver(),
     }).execute(chatMember);
 
     expect(spy).toHaveBeenCalledTimes(1);

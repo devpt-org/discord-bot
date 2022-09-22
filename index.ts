@@ -8,6 +8,7 @@ import ConsoleLoggerService from "./infrastructure/service/consoleLoggerService"
 import MessageRepository from "./domain/repository/messageRepository";
 import LoggerService from "./domain/service/loggerService";
 import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
+import ChannelResolver from "./domain/service/channelResolver";
 
 dotenv.config();
 
@@ -20,10 +21,12 @@ const client = new Client({
 const messageRepository: MessageRepository = new FileMessageRepository();
 const chatService: ChatService = new DiscordChatService(client);
 const loggerService: LoggerService = new ConsoleLoggerService();
+const channelResolver: ChannelResolver = new ChannelResolver();
 const useCaseResolver = new CommandUseCaseResolver({
   messageRepository,
   chatService,
   loggerService,
+  channelResolver,
 });
 
 client.once("ready", () => loggerService.log("Ready!"));
@@ -35,6 +38,7 @@ client.on("guildMemberAdd", (member: GuildMember) =>
     messageRepository,
     chatService,
     loggerService,
+    channelResolver,
   }).execute(member)
 );
 
