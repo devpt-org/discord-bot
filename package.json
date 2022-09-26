@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "build": "tsc index.ts --resolveJsonModule --esModuleInterop --skipLibCheck",
-    "start": "node index.ts",
+    "build": "tsc -p .",
+    "start": "npm run build && node dist/index.js",
     "start.dev": "nodemon",
     "lint": "eslint . --ext .ts",
     "lint-and-fix": "eslint . --ext .ts --fix",
