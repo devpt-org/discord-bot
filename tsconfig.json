@@ -15,7 +15,10 @@
     "removeComments": true,
     "typeRoots": ["node_modules/@types"],
     "sourceMap": false,
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "exclude": ["node_modules", "dist"]
 }
