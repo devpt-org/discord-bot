@@ -6,6 +6,7 @@ import MessageRepository from "../repository/messageRepository";
 import ChatService from "./chatService";
 import LoggerService from "./loggerService";
 import ChannelResolver from "./channelResolver";
+
 type CallbackFunctionVariadic = (...args: unknown[]) => void;
 
 export default class CommandUseCaseResolver {

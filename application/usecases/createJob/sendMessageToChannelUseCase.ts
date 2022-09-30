@@ -1,4 +1,3 @@
-import LoggerService from "../../../domain/service/loggerService";
 import {
   PartialDMChannel,
   DMChannel,
@@ -8,14 +7,21 @@ import {
   VoiceChannel,
   MessageEmbed,
   User,
+  Message,
 } from "discord.js";
+import LoggerService from "../../../domain/service/loggerService";
 
-export default class sendmessageToChannelUseCase {
+export default class SendmessageToChannelUseCase {
   private channelToDelete: DMChannel | PartialDMChannel | NewsChannel | TextChannel | ThreadChannel | VoiceChannel;
+
   private channelToSendEmbed: DMChannel | PartialDMChannel | NewsChannel | TextChannel | ThreadChannel | VoiceChannel;
+
   private embed: MessageEmbed;
+
   private author: User;
+
   private loggerService: LoggerService;
+
   constructor({
     channelToSendEmbed,
     channelToDelete,
@@ -35,10 +41,11 @@ export default class sendmessageToChannelUseCase {
     this.author = author;
     this.loggerService = loggerService;
   }
+
   async execute(): Promise<void> {
     this.channelToSendEmbed
       .send({ embeds: [this.embed] })
-      .then((m: any) => {
+      .then((m: Message) => {
         m.react("👍");
         m.react("👎");
         m.startThread({

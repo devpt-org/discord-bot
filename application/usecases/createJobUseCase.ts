@@ -1,4 +1,14 @@
-import { MessageCollector, Message } from "discord.js";
+import {
+  MessageCollector,
+  Message,
+  DMChannel,
+  PartialDMChannel,
+  NewsChannel,
+  TextChannel,
+  ThreadChannel,
+  VoiceChannel,
+  Collection,
+} from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
 import { v4 as uuidv4 } from "uuid";
 import LoggerService from "../../domain/service/loggerService";
@@ -26,8 +36,9 @@ export default class CreateNewJobUseCase {
     this.messageRepository = messageRepository;
     this.loggerService = loggerService;
   }
+
   async execute(message: Message): Promise<void> {
-    const job_questions = this.messageRepository.getJobQuestions();
+    const JOB_QUESTIONS = this.messageRepository.getJobQuestions();
     if (message.guild === null) return;
     // Cria canal apenas para o utilizador que criou o anúncio
     message.guild.channels
@@ -45,7 +56,7 @@ export default class CreateNewJobUseCase {
           },
         ],
       })
-      .then((channel: any) => {
+      .then((channel: DMChannel | PartialDMChannel | NewsChannel | TextChannel | ThreadChannel | VoiceChannel) => {
         let counter = 0;
         // Array de respostas
         const answers: string[] = [];
@@ -59,27 +70,27 @@ export default class CreateNewJobUseCase {
           time: 1000 * 300, // Esperar 5 minutos pelas respostas
         });
         // Enviar Questões
-        channel.send(job_questions[counter]);
-        collector.on("collect", (m: any) => {
+        channel.send(JOB_QUESTIONS[counter]);
+        collector.on("collect", (m: Message) => {
           if (m.author.id === message.author.id) {
             // Guardar as respostas em um array
             answers.push(m.content);
             // eslint-disable-next-line no-plusplus
             counter++;
             // Parar de recolher informação caso o utilizador tenha respondido a todas as perguntas.
-            if (counter === Object.keys(job_questions).length) {
+            if (counter === Object.keys(JOB_QUESTIONS).length) {
               collector.stop();
               this.loggerService.log("JOBS COMMAND - Collector stopped");
               return;
             }
-            m.channel.send(job_questions[counter]).catch((err: any) => {
+            m.channel.send(JOB_QUESTIONS[counter]).catch((err: Error) => {
               this.loggerService.log(err.message);
             });
           }
         });
-        collector.on("end", async (collected: any) => {
+        collector.on("end", async (collected: Collection<string, Message<boolean>>) => {
           // Cancelar o anúncio caso o user não tenha respondido a todas as perguntas.
-          if (collected.size <= Object.keys(job_questions).length - 1) {
+          if (collected.size <= Object.keys(JOB_QUESTIONS).length - 1) {
             channel.delete();
             return;
           }
@@ -89,14 +100,14 @@ export default class CreateNewJobUseCase {
           const embed = await new CreateEmbedUseCase({
             guild: message.guild,
             user: message.author,
-            answers: answers,
-          }).execute(job_questions);
+            answers,
+          }).execute(JOB_QUESTIONS);
 
           // Criar thread para seguimento da proposta
           new SendMessageToChannelUseCase({
             channelToDelete: channel,
             channelToSendEmbed: message.channel,
-            embed: embed,
+            embed,
             author: message.author,
             loggerService: this.loggerService,
           }).execute();

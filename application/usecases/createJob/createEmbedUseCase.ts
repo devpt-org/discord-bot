@@ -1,13 +1,18 @@
-import { Guild, Message, User, MessageEmbed, MessageCollector } from "discord.js";
-export default class createEmbedUseCase {
+import { Guild, User, MessageEmbed } from "discord.js";
+
+export default class CreateEmbedUseCase {
   private guild: Guild;
+
   private user: User;
+
   private answers: Array<string>;
+
   constructor({ guild, user, answers }: { guild: Guild; user: User; answers: Array<string> }) {
     this.guild = guild;
     this.user = user;
     this.answers = answers;
   }
+
   async execute(job_questions: Array<string>): Promise<MessageEmbed> {
     return new MessageEmbed()
       .setColor(0x0099ff)
