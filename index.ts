@@ -9,6 +9,8 @@ import MessageRepository from "./domain/repository/messageRepository";
 import LoggerService from "./domain/service/loggerService";
 import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
 import ChannelResolver from "./domain/service/channelResolver";
+import KataService from "./domain/service/kataService/kataService";
+import CodewarsKataService from "./infrastructure/service/codewarsKataService";
 
 dotenv.config();
 
@@ -22,11 +24,13 @@ const messageRepository: MessageRepository = new FileMessageRepository();
 const chatService: ChatService = new DiscordChatService(client);
 const loggerService: LoggerService = new ConsoleLoggerService();
 const channelResolver: ChannelResolver = new ChannelResolver();
+const kataService: KataService = new CodewarsKataService();
 const useCaseResolver = new CommandUseCaseResolver({
   messageRepository,
   chatService,
   loggerService,
   channelResolver,
+  kataService,
 });
 
 client.once("ready", () => loggerService.log("Ready!"));
