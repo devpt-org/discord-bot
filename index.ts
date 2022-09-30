@@ -44,14 +44,14 @@ client.on("guildMemberAdd", (member: GuildMember) =>
 
 client.on("messageCreate", (messages: Message) => {
   const COMMAND_PREFIX = "!";
-
+  console.log(messages.guild);
   if (!messages.content.startsWith(COMMAND_PREFIX)) return;
 
   const command = messages.content.split(" ")[0];
 
   try {
     useCaseResolver.resolveByCommand(command, {
-      channelId: messages.channel.id,
+      message: messages,
     });
   } catch (error: unknown) {
     loggerService.log(error);

@@ -1,11 +1,11 @@
 import { Context } from "../../types";
 import UseCaseNotFound from "../exception/useCaseNotFound";
 import SendMessageToChannelUseCase from "../../application/usecases/sendMessageToChannel/sendMessageToChannelUseCase";
+import CreateNewJobUseCase from "../../application/usecases/createJobUseCase";
 import MessageRepository from "../repository/messageRepository";
 import ChatService from "./chatService";
 import LoggerService from "./loggerService";
 import ChannelResolver from "./channelResolver";
-
 type CallbackFunctionVariadic = (...args: unknown[]) => void;
 
 export default class CommandUseCaseResolver {
@@ -47,14 +47,18 @@ export default class CommandUseCaseResolver {
     const commandUseCases: Record<string, CallbackFunctionVariadic> = {
       "!ja": async () =>
         new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.channelId,
+          channelId: context.message.channelId,
           message: ":point_right: https://dontasktoask.com/pt-pt/",
         }),
       "!oc": async () =>
         new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.channelId,
+          channelId: context.message.channelId,
           message: ":warning: Este servidor é APENAS para questões relacionadas com programação! :warning:",
         }),
+      "!job": async () => {
+        context.message.delete();
+        await new CreateNewJobUseCase(deps).execute(context.message);
+      },
     };
 
     if (!commandUseCases[command]) {

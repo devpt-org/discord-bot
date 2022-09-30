@@ -1,9 +1,10 @@
+import { Message } from "discord.js";
 export interface ChatMember {
   id: string;
 }
 
 export interface Context {
-  channelId: string;
+  message: Message;
 }
 
 export enum ChannelSlug {
