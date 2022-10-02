@@ -61,7 +61,7 @@ export default class DiscordChatService implements ChatService {
         thread.send(`Thread automatically created by ${author.username} in <#${channel.id}>`);
       });
     });
-    loggerService.log(`Embed Message sent to channel ${channelId}`);
+    loggerService.log(`Embed Message sent to channel with id ${channelId}`);
   }
 
   async buildEmbedFromCapturedMessages(
