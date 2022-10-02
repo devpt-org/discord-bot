@@ -48,17 +48,17 @@ export default class CommandUseCaseResolver {
     const commandUseCases: Record<string, CallbackFunctionVariadic> = {
       "!ja": async () =>
         new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.message.channelId,
+          channelId: context.channel.id,
           message: ":point_right: https://dontasktoask.com/pt-pt/",
         }),
       "!oc": async () =>
         new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.message.channelId,
+          channelId: context.channel.id,
           message: ":warning: Este servidor é APENAS para questões relacionadas com programação! :warning:",
         }),
       "!job": async () => {
-        context.message.delete();
-        await new CreateNewJobUseCase(deps).execute(context.message);
+        if (context.guildId === undefined) return;
+        await new CreateNewJobUseCase(deps).execute(context);
       },
     };
 

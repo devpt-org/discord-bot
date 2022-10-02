@@ -44,16 +44,22 @@ client.on("guildMemberAdd", (member: GuildMember) =>
 
 client.on("messageCreate", (messages: Message) => {
   const COMMAND_PREFIX = "!";
-  console.log(messages.guild);
   if (!messages.content.startsWith(COMMAND_PREFIX)) return;
 
   const command = messages.content.split(" ")[0];
 
   try {
     useCaseResolver.resolveByCommand(command, {
-      message: messages,
+      message: { id: messages.id },
+      guildId: messages.guild?.id,
+      user: { id: messages.author.id },
+      channel: { id: messages.channel.id },
     });
   } catch (error: unknown) {
     loggerService.log(error);
   }
+});
+
+process.on("unhandledRejection", (error) => {
+  loggerService.log("Unhandled promise rejection:", error);
 });
