@@ -1,6 +1,7 @@
 import { Context } from "../../types";
 import UseCaseNotFound from "../exception/useCaseNotFound";
 import SendMessageToChannelUseCase from "../../application/usecases/sendMessageToChannel/sendMessageToChannelUseCase";
+import CreateNewJobUseCase from "../../application/usecases/createJobUseCase";
 import MessageRepository from "../repository/messageRepository";
 import ChatService from "./chatService";
 import LoggerService from "./loggerService";
@@ -47,14 +48,18 @@ export default class CommandUseCaseResolver {
     const commandUseCases: Record<string, CallbackFunctionVariadic> = {
       "!ja": async () =>
         new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.channelId,
+          channelId: context.channel.id,
           message: ":point_right: https://dontasktoask.com/pt-pt/",
         }),
       "!oc": async () =>
         new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.channelId,
+          channelId: context.channel.id,
           message: ":warning: Este servidor é APENAS para questões relacionadas com programação! :warning:",
         }),
+      "!job": async () => {
+        if (context.guildId === undefined) return;
+        await new CreateNewJobUseCase(deps).execute(context);
+      },
     };
 
     if (!commandUseCases[command]) {
