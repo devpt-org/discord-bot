@@ -1,44 +1,34 @@
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
-import { Client } from "discord.js";
+import { vi, describe, it, expect, beforeEach } from "vitest";
+import { MockProxy, mock } from "vitest-mock-extended";
 import SendCodewarsLeaderboardToChannelUseCase from "../../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
-import DiscordChatService from "../../../infrastructure/service/discordChatService";
 import ChatService from "../../../domain/service/chatService";
 import KataService from "../../../domain/service/kataService/kataService";
 import KataLeaderboardUser from "../../../domain/service/kataService/kataLeaderboardUser";
 
 describe("send codewars leaderboard to channel use case", () => {
-  beforeEach(() => {
-    vi.mock("../../../infrastructure/service/discordChatService", () => ({
-      default: function mockDefault() {
-        return {
-          sendMessageToChannel: () => {},
-        };
-      },
-    }));
+  let mockChatService: MockProxy<ChatService>;
+  let mockKataService: MockProxy<KataService>;
 
+  beforeEach(() => {
     vi.mock("discord.js", () => ({
       Client: vi.fn(),
     }));
-  });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
+    mockChatService = mock<ChatService>();
+
+    mockChatService.sendMessageToChannel.mockResolvedValue();
+
+    mockKataService = mock<KataService>();
   });
 
   it("should send a message to channel in chatService referring there aren't still any participants", async () => {
-    const CodewarsKataService = vi.fn().mockImplementation(() => ({
-      getLeaderboard: () => [],
-    }));
+    mockKataService.getLeaderboard.mockReturnValueOnce(Promise.resolve([]));
 
-    const discordClient = new Client({ intents: [] });
-    const chatService: ChatService = new DiscordChatService(discordClient);
-    const kataService: KataService = new CodewarsKataService();
-
-    const spy = vi.spyOn(chatService, "sendMessageToChannel");
+    const spy = vi.spyOn(mockChatService, "sendMessageToChannel");
 
     await new SendCodewarsLeaderboardToChannelUseCase({
-      chatService,
-      kataService,
+      chatService: mockChatService,
+      kataService: mockKataService,
     }).execute({
       channelId: "855861944930402342",
     });
@@ -48,8 +38,8 @@ describe("send codewars leaderboard to channel use case", () => {
   });
 
   it("should send a message to channel in chatService with a leaderboard with 12 participants plus a message to check more", async () => {
-    const CodewarsKataService = vi.fn().mockImplementation(() => ({
-      getLeaderboard: () => [
+    mockKataService.getLeaderboard.mockReturnValueOnce(
+      Promise.resolve([
         new KataLeaderboardUser({ username: "utilizador-1", score: 4, points: [3, 0, 1] }),
         new KataLeaderboardUser({ username: "utilizador-2", score: 4, points: [0, 3, 1] }),
         new KataLeaderboardUser({ username: "utilizador-3", score: 4, points: [0, 0, 4] }),
@@ -62,18 +52,14 @@ describe("send codewars leaderboard to channel use case", () => {
         new KataLeaderboardUser({ username: "utilizador-10", score: 1, points: [1, 0, 0] }),
         new KataLeaderboardUser({ username: "utilizador-11", score: 1, points: [0, 1, 0] }),
         new KataLeaderboardUser({ username: "utilizador-12", score: 1, points: [0, 0, 1] }),
-      ],
-    }));
+      ])
+    );
 
-    const discordClient = new Client({ intents: [] });
-    const chatService: ChatService = new DiscordChatService(discordClient);
-    const kataService: KataService = new CodewarsKataService();
-
-    const spy = vi.spyOn(chatService, "sendMessageToChannel");
+    const spy = vi.spyOn(mockChatService, "sendMessageToChannel");
 
     await new SendCodewarsLeaderboardToChannelUseCase({
-      chatService,
-      kataService,
+      chatService: mockChatService,
+      kataService: mockKataService,
     }).execute({
       channelId: "855861944930402342",
     });
@@ -98,23 +84,19 @@ describe("send codewars leaderboard to channel use case", () => {
   });
 
   it("should send a message to channel in chatService with a leaderboard with 3 participants without a footer message", async () => {
-    const CodewarsKataService = vi.fn().mockImplementation(() => ({
-      getLeaderboard: () => [
+    mockKataService.getLeaderboard.mockReturnValueOnce(
+      Promise.resolve([
         new KataLeaderboardUser({ username: "utilizador-1", score: 4, points: [3, 0, 1] }),
         new KataLeaderboardUser({ username: "utilizador-2", score: 4, points: [0, 3, 1] }),
         new KataLeaderboardUser({ username: "utilizador-3", score: 1, points: [0, 0, 1] }),
-      ],
-    }));
+      ])
+    );
 
-    const discordClient = new Client({ intents: [] });
-    const chatService: ChatService = new DiscordChatService(discordClient);
-    const kataService = new CodewarsKataService();
-
-    const spy = vi.spyOn(chatService, "sendMessageToChannel");
+    const spy = vi.spyOn(mockChatService, "sendMessageToChannel");
 
     await new SendCodewarsLeaderboardToChannelUseCase({
-      chatService,
-      kataService,
+      chatService: mockChatService,
+      kataService: mockKataService,
     }).execute({
       channelId: "855861944930402342",
     });
