@@ -10,10 +10,6 @@ describe("send codewars leaderboard to channel use case", () => {
   let mockKataService: MockProxy<KataService>;
 
   beforeEach(() => {
-    vi.mock("discord.js", () => ({
-      Client: vi.fn(),
-    }));
-
     mockChatService = mock<ChatService>();
 
     mockChatService.sendMessageToChannel.mockResolvedValue();
