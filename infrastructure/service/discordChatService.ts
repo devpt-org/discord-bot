@@ -1,4 +1,4 @@
-import { Client, Collection, Message, MessageCollector, MessageEmbed, ThreadChannel } from "discord.js";
+import { AnyChannel, Client, Collection, Message, MessageCollector, MessageEmbed, ThreadChannel } from "discord.js";
 import { ChannelTypes } from "discord.js/typings/enums";
 import { v4 as uuidv4 } from "uuid";
 import ChatService from "../../domain/service/chatService";
@@ -28,12 +28,9 @@ export default class DiscordChatService implements ChatService {
     loggerService: LoggerService,
     embed: EmbedMessage,
     channelId: string,
-    guildId: string,
-    user: User
+    author: User
   ): Promise<void> {
     const channel = await this.client.channels.fetch(channelId);
-    const guild = await this.client.guilds.fetch(guildId);
-    const author = (await guild.members.fetch(user.id)).user;
     if (channel === null) {
       throw new Error(`Channel with id ${channelId} not found!`);
     }
@@ -41,6 +38,7 @@ export default class DiscordChatService implements ChatService {
     if (!channel.isText()) {
       throw new Error(`Channel with id ${channelId} is not a text channel!`);
     }
+
     const messageEmbed = new MessageEmbed()
       .setColor(embed.color)
       .setTitle(embed.title)
@@ -62,72 +60,6 @@ export default class DiscordChatService implements ChatService {
       });
     });
     loggerService.log(`Embed Message sent to channel with id ${channelId}`);
-  }
-
-  async buildEmbedFromCapturedMessages(
-    loggerService: LoggerService,
-    job_questions: string[],
-    capturedMessages: string[],
-    guildId: string,
-    user: User
-  ): Promise<EmbedMessage> {
-    const guild = await this.client.guilds.fetch(guildId);
-    const author = (await guild.members.fetch(user.id)).user;
-    if (guild === null) {
-      throw new Error(`Guild with id ${guildId} not found!`);
-    }
-
-    loggerService.log(`Embed Message built`);
-
-    return {
-      color: 0x0099ff,
-      title: capturedMessages[0],
-      author: {
-        name: `${author.username}#${author.discriminator}`,
-        iconURL: author.displayAvatarURL(),
-      },
-      description: capturedMessages[7],
-      fields: [
-        {
-          name: job_questions[0],
-          value: capturedMessages[0],
-        },
-        {
-          name: job_questions[1],
-          value: capturedMessages[1],
-        },
-        {
-          name: job_questions[2],
-          value: capturedMessages[2],
-        },
-        {
-          name: job_questions[3],
-          value: capturedMessages[3],
-        },
-        {
-          name: job_questions[4],
-          value: capturedMessages[4],
-        },
-        {
-          name: job_questions[5],
-          value: capturedMessages[5],
-        },
-        {
-          name: job_questions[6],
-          value: capturedMessages[6],
-        },
-        {
-          name: "Contacte",
-          value: `<@${user.id}>`,
-          inline: true,
-        },
-      ],
-      timestamp: new Date(),
-      footer: {
-        text: guild.name,
-        iconURL: guild.iconURL() || "",
-      },
-    };
   }
 
   async createPrivateChannel(loggerService: LoggerService, guildId: string, user: User): Promise<Channel> {
@@ -165,16 +97,14 @@ export default class DiscordChatService implements ChatService {
     loggerService.log(`Channel with id ${channel.id} deleted`);
   }
 
-  async readMessagesFromChannel(
+  async askAndCollectAnswersFromChannel(
     loggerService: LoggerService,
     channel: Channel,
-    guildId: string,
-    user: User,
-    job_questions: string[]
+    author: User,
+    questions: string[]
   ): Promise<string[]> {
     const channelMessage = await this.client.channels.fetch(channel.id);
-    const guild = await this.client.guilds.fetch(guildId);
-    const author = (await guild.members.fetch(user.id)).user;
+
     let counter = 0;
     // Array de respostas
     const answers: string[] = [];
@@ -187,9 +117,6 @@ export default class DiscordChatService implements ChatService {
       throw new Error(`Channel with id ${channel.id} is not a text channel!`);
     }
 
-    if (guild === null) {
-      throw new Error(`Guild with id ${guildId} not found!`);
-    }
     // Mensagem inicial do canal privado
     channelMessage.send(`${author.toString()}, Por favor responda as perguntas abaixo para criar um novo anúncio.`);
 
@@ -199,22 +126,23 @@ export default class DiscordChatService implements ChatService {
     });
 
     // Enviar Questões
-    channelMessage.send(job_questions[counter]);
+    channelMessage.send(questions[counter]);
 
     // Captar as questões
-    collector.on("collect", (m: Message) => {
-      if (m.author.id === author.id) {
+    collector.on("collect", (message: Message) => {
+      if (message.author.id === author.id) {
         // Guardar as respostas em um array
-        answers.push(m.content);
+        answers.push(message.content);
         // eslint-disable-next-line no-plusplus
         counter++;
         // Parar de recolher informação caso o utilizador tenha respondido a todas as perguntas.
-        if (counter === Object.keys(job_questions).length) {
+        if (counter === Object.keys(questions).length) {
           collector.stop();
           loggerService.log("JOBS COMMAND - Collector stopped");
           return;
         }
-        m.channel.send(job_questions[counter]).catch((err: Error) => {});
+
+        message.channel.send(questions[counter]);
       }
     });
 
@@ -222,7 +150,7 @@ export default class DiscordChatService implements ChatService {
       // Após captar as questões
       collector.on("end", async (collected: Collection<string, Message<boolean>>) => {
         // Cancelar o job caso o user não tenha respondido a todas as perguntas.
-        if (collected.size <= Object.keys(job_questions).length - 1) {
+        if (collected.size <= Object.keys(questions).length - 1) {
           channelMessage.delete();
           loggerService.log("JOBS COMMAND - Collector canceled");
         } else {
@@ -236,5 +164,15 @@ export default class DiscordChatService implements ChatService {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async deleteMessageFromChannel(loggerService: LoggerService, messageId: string, channelId: string): Promise<void> {
     // TODO
+  }
+
+  getUserById(userId: string): User {
+    const user = this.client.users.cache.get(userId);
+
+    if (!user) {
+      throw new Error(`User with id ${userId} not found!`);
+    }
+
+    return user;
   }
 }

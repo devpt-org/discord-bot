@@ -9,30 +9,22 @@ export default interface ChatService {
   sendMessageEmbedToChannel(
     loggerService: LoggerService,
     embed: EmbedMessage,
-    channel: string,
-    guildId: string,
-    user: User
+    channelId: string,
+    author: User
   ): Promise<void>;
-
-  buildEmbedFromCapturedMessages(
-    loggerService: LoggerService,
-    job_questions: string[],
-    capturedMessages: string[],
-    guildId: string,
-    user: User
-  ): Promise<EmbedMessage>;
 
   createPrivateChannel(loggerService: LoggerService, guildId: string, user: User): Promise<Channel>;
 
   deleteChannel(loggerService: LoggerService, channel: Channel): void;
 
-  readMessagesFromChannel(
+  askAndCollectAnswersFromChannel(
     loggerService: LoggerService,
     channel: Channel,
-    guildId: string,
-    user: User,
-    job_questions: string[]
+    author: User,
+    questions: string[]
   ): Promise<string[]>;
 
   deleteMessageFromChannel(loggerService: LoggerService, messageId: string, channelId: string): void;
+
+  getUserById(userId: string): User;
 }
