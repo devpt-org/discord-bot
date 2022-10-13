@@ -1,5 +1,5 @@
 import { Client, TextChannel, User, MessageReaction, GuildMember, Guild } from "discord.js";
-import { RoleInterface, RoleInterfaceMap } from "./roles/roleInterface";
+import { RoleInterface, RoleInterfaceMap } from "./interfaces/roleInterface";
 
 export default class ReactionRoles {
   private client: Client;

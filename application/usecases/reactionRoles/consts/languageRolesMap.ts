@@ -1,6 +1,6 @@
-import { RoleInterfaceMap } from "./roleInterface";
+import { RoleInterfaceMap } from "../interfaces/roleInterface";
 
-const LANGUAGES_MAP: RoleInterfaceMap = {
+const LANGUAGE_ROLES_MAP: RoleInterfaceMap = {
   C: {
     id: null,
     name: "C",
@@ -88,4 +88,4 @@ const LANGUAGES_MAP: RoleInterfaceMap = {
   },
 };
 
-export default LANGUAGES_MAP;
+export default LANGUAGE_ROLES_MAP;
