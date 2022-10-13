@@ -11,7 +11,11 @@ export default class ReactionRoles {
   constructor({ client, channelId }: { client: Client; channelId: string }) {
     this.client = client;
     this.channel = this.client.channels.cache.get(channelId) as TextChannel;
-    this.guild = this.channel.guild;
+    if (this.channel) {
+      this.guild = this.channel.guild;
+    } else {
+      throw new Error("Channel not found");
+    }
   }
 
   async execute({ messageId, rolesMap }: { messageId: string; rolesMap: RoleInterfaceMap }): Promise<void> {

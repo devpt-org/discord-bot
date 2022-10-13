@@ -67,10 +67,9 @@ client.on("messageCreate", (messages: Message) => {
   }
 });
 
-// Channel of messages id
-const channelId = "888554491396386816";
-
 client.on("ready", () => {
+  // Channel of messages id
+  const channelId = "888554491396386816";
   const reactionRoles = new ReactionRoles({ client, channelId });
 
   // Language roles message id
