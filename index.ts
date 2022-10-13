@@ -9,13 +9,19 @@ import MessageRepository from "./domain/repository/messageRepository";
 import LoggerService from "./domain/service/loggerService";
 import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
 import ChannelResolver from "./domain/service/channelResolver";
+import ReactionRoles from "./application/usecases/reactionRoles/reactionRoles";
 
 dotenv.config();
 
 const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+  ],
 });
 
 const messageRepository: MessageRepository = new FileMessageRepository();
@@ -57,3 +63,10 @@ client.on("messageCreate", (messages: Message) => {
     loggerService.log(error);
   }
 });
+
+// Whatch message reaction
+// const channelId = "888554491396386816";
+const channelId = "1022518940670369864";
+// const messageId = "1029463702988128376";
+const messageId = "1029474356180570205";
+client.on("ready", () => new ReactionRoles({ client, channelId }).execute({ messageId }));
