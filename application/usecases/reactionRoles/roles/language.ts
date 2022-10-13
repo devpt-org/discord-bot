@@ -1,11 +1,6 @@
 import { RoleInterfaceMap } from "./roleInterface";
 
 const LANGUAGES_MAP: RoleInterfaceMap = {
-  THUMBS_UP: {
-    id: null,
-    name: "thumbs_up",
-    emoji: "👍",
-  },
   C: {
     id: null,
     name: "C",

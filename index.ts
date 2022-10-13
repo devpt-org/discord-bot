@@ -10,6 +10,7 @@ import LoggerService from "./domain/service/loggerService";
 import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
 import ChannelResolver from "./domain/service/channelResolver";
 import ReactionRoles from "./application/usecases/reactionRoles/reactionRoles";
+import LANGUAGES_MAP from "./application/usecases/reactionRoles/roles/language";
 
 dotenv.config();
 
@@ -64,9 +65,7 @@ client.on("messageCreate", (messages: Message) => {
   }
 });
 
-// Whatch message reaction
-// const channelId = "888554491396386816";
-const channelId = "1022518940670369864";
-// const messageId = "1029463702988128376";
-const messageId = "1029474356180570205";
-client.on("ready", () => new ReactionRoles({ client, channelId }).execute({ messageId }));
+// Watch message reaction
+const channelId = "888554491396386816";
+const messageId = "1029463702988128376";
+client.on("ready", () => new ReactionRoles({ client, channelId }).execute({ messageId, rolesMap: LANGUAGES_MAP }));
