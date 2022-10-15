@@ -31,6 +31,7 @@ const client = new Client({
     Intents.FLAGS.GUILD_MESSAGES,
     Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
   ],
+  partials: ["MESSAGE", "REACTION"],
 });
 
 const messageRepository: MessageRepository = new FileMessageRepository();
@@ -73,24 +74,37 @@ client.on("messageCreate", (messages: Message) => {
   }
 });
 
+const messageRoles: {
+  [key: string]: ReactionRoles;
+} = {
+  [LANGUAGE_ROLE_MESSAGE_ID]: new ReactionRoles({ client, roles: LANGUAGE_ROLES_MAP }),
+  [AREA_ROLE_MESSAGE_ID]: new ReactionRoles({ client, roles: AREA_ROLES_MAP }),
+  [EXTRA_AREA_ROLE_MESSAGE_ID]: new ReactionRoles({ client, roles: EXTRA_AREA_ROLES_MAP }),
+};
+
 client.once("ready", async () => {
   try {
     // Channel of messages id
     const channelId = CHANNEL_ROLE_MESSAGE_ID;
-    const reactionRoles = new ReactionRoles({ client, channelId });
 
-    // Language roles message id
-    const languageMessageId = LANGUAGE_ROLE_MESSAGE_ID;
-    reactionRoles.execute({ messageId: languageMessageId, rolesMap: LANGUAGE_ROLES_MAP });
-
-    // Area roles message id
-    const areaMessageId = AREA_ROLE_MESSAGE_ID;
-    reactionRoles.execute({ messageId: areaMessageId, rolesMap: AREA_ROLES_MAP });
-
-    // Extra area roles message id
-    const extraAreaMessageId = EXTRA_AREA_ROLE_MESSAGE_ID;
-    reactionRoles.execute({ messageId: extraAreaMessageId, rolesMap: EXTRA_AREA_ROLES_MAP });
+    Object.keys(messageRoles).forEach(async (messageId) => {
+      messageRoles[messageId].execute({ channelId, messageId });
+    });
   } catch (error) {
     loggerService.log(error);
+  }
+});
+
+client.on("messageReactionAdd", (reaction, user) => {
+  if (Object.keys(messageRoles).find((messageId) => messageId === reaction.message.id)) {
+    messageRoles[reaction.message.id].userRoles({ type: "add", reaction, user });
+  }
+
+  // reaction.message.id
+});
+
+client.on("messageReactionRemove", (reaction, user) => {
+  if (Object.keys(messageRoles).find((messageId) => messageId === reaction.message.id)) {
+    messageRoles[reaction.message.id].userRoles({ type: "remove", reaction, user });
   }
 });

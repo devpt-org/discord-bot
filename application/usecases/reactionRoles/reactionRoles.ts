@@ -1,29 +1,36 @@
-import { Client, TextChannel, User, MessageReaction, GuildMember, Guild, GuildEmoji } from "discord.js";
+import {
+  Client,
+  Guild,
+  GuildMember,
+  MessageReaction,
+  PartialMessageReaction,
+  PartialUser,
+  TextChannel,
+  User,
+} from "discord.js";
 import { RoleInterface, RoleInterfaceMap } from "./interfaces/roleInterface";
 
 export default class ReactionRoles {
   private client: Client;
 
-  private channel: TextChannel;
+  private roles: RoleInterface[] = [];
 
-  constructor({ client, channelId }: { client: Client; channelId: string }) {
+  constructor({ client, roles }: { client: Client; roles: RoleInterfaceMap }) {
     this.client = client;
-    this.channel = this.client.channels.cache.get(channelId) as TextChannel;
-
-    if (!this.channel) {
-      throw new Error("Channel not found");
+    if (roles) {
+      this.roles = Object.values(roles);
     }
   }
 
-  async execute({ messageId, rolesMap }: { messageId: string; rolesMap: RoleInterfaceMap }): Promise<void> {
-    if (!this.channel) {
+  async execute({ channelId, messageId }: { channelId: string; messageId: string }): Promise<void> {
+    const channel = this.client.channels.cache.get(channelId) as TextChannel;
+
+    if (!channel) {
       throw new Error("Channel not found");
     }
 
-    console.log("Reaction roles started", messageId);
-
     // Fetch message by id
-    this.channel?.messages
+    channel.messages
       .fetch(messageId)
       .then(async (message) => {
         const { guild } = message;
@@ -33,7 +40,7 @@ export default class ReactionRoles {
         }
 
         // Map roles with server role id
-        const roles = this.mapRolesId({ guild, map: rolesMap });
+        const roles = this.mapRolesId({ guild, roles: this.roles });
 
         // Read current reactions (if bot was offline)
         message.reactions.cache.forEach((reaction) => {
@@ -44,7 +51,7 @@ export default class ReactionRoles {
               if (user.id === this.client.user?.id) return;
 
               // Add role to user
-              await this.userRoles({ type: "add", reaction, user, roles });
+              await this.userRoles({ type: "add", reaction, user });
             });
           });
         });
@@ -72,34 +79,12 @@ export default class ReactionRoles {
             console.log("Error trying to react to message", error);
           }
         });
-
-        // Filter if raction is not from the bot
-        // And for valid roles emojis
-        const filter = (reaction: MessageReaction, user: User) =>
-          !!Object.values(rolesMap).find((role) => role.emoji === reaction.emoji.name) &&
-          user.id !== this.client.user?.id;
-
-        // Add reaction listener
-        // Dispose true: to listen remove reaction
-        const reactionCollector = message.createReactionCollector({ filter, dispose: true });
-
-        // Listen for added reactions
-        reactionCollector.on("collect", async (reaction, user) =>
-          this.userRoles({ type: "add", roles, reaction, user })
-        );
-
-        // Listen for removed reactions
-        // _Just works for reactions added after bot become online_
-        // _Workaround: user must remove reaction, add and remove it again_
-        reactionCollector.on("remove", async (reaction, user) =>
-          this.userRoles({ type: "remove", roles, reaction, user })
-        );
       })
       .catch(console.error);
   }
 
-  private mapRolesId({ guild, map }: { guild: Guild; map: RoleInterfaceMap }): RoleInterface[] {
-    return Object.values(map).reduce((prev, curr: RoleInterface) => {
+  private mapRolesId({ guild, roles }: { guild: Guild; roles: RoleInterface[] }): RoleInterface[] {
+    return roles.reduce((prev, curr: RoleInterface) => {
       const currCopy = curr;
 
       // If role doesn't have id configured, fetch it
@@ -115,11 +100,17 @@ export default class ReactionRoles {
     }, [] as RoleInterface[]);
   }
 
-  private async fetchMember({ user }: { user: User }): Promise<GuildMember | undefined> {
+  private async fetchMember({
+    guild,
+    user,
+  }: {
+    guild: Guild;
+    user: User | PartialUser;
+  }): Promise<GuildMember | undefined> {
     try {
-      if (user) {
+      if (user && guild) {
         // Fetch user
-        const member = await this.channel.guild?.members.fetch(user.id);
+        const member = await guild?.members.fetch(user.id);
 
         return member;
       }
@@ -130,34 +121,38 @@ export default class ReactionRoles {
     return undefined;
   }
 
-  private async userRoles({
+  async userRoles({
     type = "add",
     reaction,
     user,
-    roles,
   }: {
     type: "add" | "remove";
-    reaction: MessageReaction;
-    user: User;
-    roles: RoleInterface[];
+    reaction: MessageReaction | PartialMessageReaction;
+    user: User | PartialUser;
   }): Promise<void> {
+    if (user?.id === this.client.user?.id) return;
+
     // Get role by emoji
-    const role = roles.find((r) => r.emoji === reaction.emoji.name);
+    const role = this.roles.find((r) => r.emoji === reaction.emoji.name);
 
     if (role && role.id) {
       try {
-        // Add role to user
-        const member = await this.fetchMember({ user });
+        const { guild } = reaction.message;
 
-        if (member) {
-          if (type === "add") {
-            member.roles.add(role.id).catch((error) => {
-              console.error("Error trying to add role to user", error);
-            });
-          } else {
-            member.roles.remove(role.id).catch((error) => {
-              console.error("Error trying to remove role to user", error);
-            });
+        if (guild) {
+          // Add role to user
+          const member = await this.fetchMember({ guild, user });
+
+          if (member) {
+            if (type === "add") {
+              member.roles.add(role.id).catch((error) => {
+                console.error("Error trying to add role to user", error);
+              });
+            } else {
+              member.roles.remove(role.id).catch((error) => {
+                console.error("Error trying to remove role to user", error);
+              });
+            }
           }
         }
       } catch (error) {
