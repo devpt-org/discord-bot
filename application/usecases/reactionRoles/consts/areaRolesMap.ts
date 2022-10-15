@@ -4,42 +4,50 @@ const AREA_ROLES_MAP: RoleInterfaceMap = {
   SECURITY: {
     id: null,
     name: "Security",
-    emoji: "shield",
+    emoji: "🛡️",
+    native: true,
   },
   BACKEND: {
     id: null,
     name: "Back End",
-    emoji: "sparkles",
+    emoji: "✨",
+    native: true,
   },
   FRONTEND: {
     id: null,
     name: "Front End",
-    emoji: "computer",
+    emoji: "💻",
+    native: true,
   },
   ANDROID: {
     id: null,
     name: "Android",
-    emoji: "mobile_phone",
+    emoji: "📱",
+    native: true,
   },
   IOS: {
     id: null,
     name: "iOS",
-    emoji: "green_apple",
+    emoji: "🍏",
+    native: true,
   },
   DEVOPS: {
     id: null,
     name: "DevOps",
-    emoji: "toolbox",
+    emoji: "🧰",
+    native: true,
   },
   GAMEDEV: {
     id: null,
     name: "Game Dev",
-    emoji: "video_game",
+    emoji: "🎮",
+    native: true,
   },
   IOT: {
     id: null,
     name: "IoT",
-    emoji: "trackball",
+    emoji: "🖲️",
+    native: true,
   },
 };
 

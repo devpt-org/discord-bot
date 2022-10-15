@@ -16,7 +16,13 @@ import EXTRA_AREA_ROLES_MAP from "./application/usecases/reactionRoles/consts/ex
 
 dotenv.config();
 
-const { DISCORD_TOKEN } = process.env;
+const {
+  DISCORD_TOKEN,
+  CHANNEL_ROLE_MESSAGE_ID = "888554491396386816",
+  AREA_ROLE_MESSAGE_ID = "888783297260437525",
+  EXTRA_AREA_ROLE_MESSAGE_ID = "915019654181826580",
+  LANGUAGE_ROLE_MESSAGE_ID = "1029463702988128376",
+} = process.env;
 
 const client = new Client({
   intents: [
@@ -67,20 +73,24 @@ client.on("messageCreate", (messages: Message) => {
   }
 });
 
-client.on("ready", () => {
-  // Channel of messages id
-  const channelId = "888554491396386816";
-  const reactionRoles = new ReactionRoles({ client, channelId });
+client.once("ready", async () => {
+  try {
+    // Channel of messages id
+    const channelId = CHANNEL_ROLE_MESSAGE_ID;
+    const reactionRoles = new ReactionRoles({ client, channelId });
 
-  // Language roles message id
-  const languageMessageId = "1029463702988128376";
-  reactionRoles.execute({ messageId: languageMessageId, rolesMap: LANGUAGE_ROLES_MAP });
+    // Language roles message id
+    const languageMessageId = LANGUAGE_ROLE_MESSAGE_ID;
+    reactionRoles.execute({ messageId: languageMessageId, rolesMap: LANGUAGE_ROLES_MAP });
 
-  // Area roles message id
-  const areaMessageId = "888783297260437525";
-  reactionRoles.execute({ messageId: areaMessageId, rolesMap: AREA_ROLES_MAP });
+    // Area roles message id
+    const areaMessageId = AREA_ROLE_MESSAGE_ID;
+    reactionRoles.execute({ messageId: areaMessageId, rolesMap: AREA_ROLES_MAP });
 
-  // Extra area roles message id
-  const extraAreaMessageId = "915019654181826580";
-  reactionRoles.execute({ messageId: extraAreaMessageId, rolesMap: EXTRA_AREA_ROLES_MAP });
+    // Extra area roles message id
+    const extraAreaMessageId = EXTRA_AREA_ROLE_MESSAGE_ID;
+    reactionRoles.execute({ messageId: extraAreaMessageId, rolesMap: EXTRA_AREA_ROLES_MAP });
+  } catch (error) {
+    loggerService.log(error);
+  }
 });

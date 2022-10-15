@@ -4,12 +4,14 @@ const EXTRA_AREA_ROLES_MAP: RoleInterfaceMap = {
   CONVIVIO: {
     id: null,
     name: "Convívio",
-    emoji: "people_hugging",
+    emoji: "🫂",
+    native: true,
   },
   NIGHTGAMING: {
     id: null,
     name: "Night Gaming",
-    emoji: "joystick",
+    emoji: "🕹️",
+    native: true,
   },
 };
 

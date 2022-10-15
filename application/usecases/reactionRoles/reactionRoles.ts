@@ -1,4 +1,4 @@
-import { Client, TextChannel, User, MessageReaction, GuildMember, Guild } from "discord.js";
+import { Client, TextChannel, User, MessageReaction, GuildMember, Guild, GuildEmoji } from "discord.js";
 import { RoleInterface, RoleInterfaceMap } from "./interfaces/roleInterface";
 
 export default class ReactionRoles {
@@ -6,25 +6,34 @@ export default class ReactionRoles {
 
   private channel: TextChannel;
 
-  private guild: Guild;
-
   constructor({ client, channelId }: { client: Client; channelId: string }) {
     this.client = client;
     this.channel = this.client.channels.cache.get(channelId) as TextChannel;
-    if (this.channel) {
-      this.guild = this.channel.guild;
-    } else {
+
+    if (!this.channel) {
       throw new Error("Channel not found");
     }
   }
 
   async execute({ messageId, rolesMap }: { messageId: string; rolesMap: RoleInterfaceMap }): Promise<void> {
+    if (!this.channel) {
+      throw new Error("Channel not found");
+    }
+
+    console.log("Reaction roles started", messageId);
+
     // Fetch message by id
     this.channel?.messages
       .fetch(messageId)
       .then(async (message) => {
+        const { guild } = message;
+
+        if (!guild) {
+          throw new Error("Guild not found");
+        }
+
         // Map roles with server role id
-        const roles = this.mapRolesId(rolesMap);
+        const roles = this.mapRolesId({ guild, map: rolesMap });
 
         // Read current reactions (if bot was offline)
         message.reactions.cache.forEach((reaction) => {
@@ -34,26 +43,34 @@ export default class ReactionRoles {
               // If user is not the bot
               if (user.id === this.client.user?.id) return;
 
-              // Get role by emoji
-              const role = roles.find((r) => r.emoji === reaction.emoji.name);
-
-              if (role && role.id) {
-                try {
-                  const member = await this.guild.members.fetch(user.id);
-
-                  if (member) {
-                    member.roles.add(role.id).catch((error) => {
-                      console.log(error);
-                    });
-                  } else {
-                    console.log("member not found");
-                  }
-                } catch (error) {
-                  console.error(error);
-                }
-              }
+              // Add role to user
+              await this.userRoles({ type: "add", reaction, user, roles });
             });
           });
+        });
+
+        // Add all emojis to message (for easy access)
+        roles.forEach((role) => {
+          try {
+            if (!role.native) {
+              // Verify if emoji is valid on server
+              const emoji = guild.emojis.cache.find((e) => e.name === role.emoji);
+
+              if (emoji) {
+                message.react(emoji).catch((error) => {
+                  console.error("Error trying to react to message", error, role.emoji);
+                });
+              } else {
+                console.error("Emoji not found", role.emoji);
+              }
+            } else {
+              message.react(role.emoji).catch((error) => {
+                console.error("Error trying to react to message", error, role.emoji);
+              });
+            }
+          } catch (error) {
+            console.log("Error trying to react to message", error);
+          }
         });
 
         // Filter if raction is not from the bot
@@ -81,13 +98,13 @@ export default class ReactionRoles {
       .catch(console.error);
   }
 
-  private mapRolesId(roleMap: RoleInterfaceMap): RoleInterface[] {
-    return Object.values(roleMap).reduce((prev, curr: RoleInterface) => {
+  private mapRolesId({ guild, map }: { guild: Guild; map: RoleInterfaceMap }): RoleInterface[] {
+    return Object.values(map).reduce((prev, curr: RoleInterface) => {
       const currCopy = curr;
 
       // If role doesn't have id configured, fetch it
-      if (!curr.id && this.guild.roles?.cache) {
-        const role = this.guild.roles?.cache?.find((r) => r.name === curr.name);
+      if (!curr.id && guild.roles?.cache) {
+        const role = guild.roles?.cache?.find((r) => r.name === curr.name);
 
         currCopy.id = role?.id || null;
       }
@@ -107,7 +124,7 @@ export default class ReactionRoles {
         return member;
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error trying to fetch user", error);
     }
 
     return undefined;
@@ -134,13 +151,17 @@ export default class ReactionRoles {
 
         if (member) {
           if (type === "add") {
-            member.roles.add(role.id);
+            member.roles.add(role.id).catch((error) => {
+              console.error("Error trying to add role to user", error);
+            });
           } else {
-            member.roles.remove(role.id);
+            member.roles.remove(role.id).catch((error) => {
+              console.error("Error trying to remove role to user", error);
+            });
           }
         }
       } catch (error) {
-        console.error(error);
+        console.error(`Error trying to ${type} user/member role`, error);
       }
     }
   }
