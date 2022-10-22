@@ -8,6 +8,11 @@ export default class SendCodewarsLeaderboardToChannelUseCase {
 
   private kataService: KataService;
 
+  constructor({ chatService, kataService }: { chatService: ChatService; kataService: KataService }) {
+    this.chatService = chatService;
+    this.kataService = kataService;
+  }
+
   private formatLeaderboard(leaderboard: KataLeaderboardUser[]): string {
     let output = "```";
     let position = 1;
@@ -36,11 +41,6 @@ export default class SendCodewarsLeaderboardToChannelUseCase {
     }
 
     return output;
-  }
-
-  constructor({ chatService, kataService }: { chatService: ChatService; kataService: KataService }) {
-    this.chatService = chatService;
-    this.kataService = kataService;
   }
 
   async execute({ channelId }: SendCodewarsLeaderboardToChannelInput): Promise<void> {
