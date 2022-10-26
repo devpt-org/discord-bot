@@ -9,10 +9,12 @@ import MessageRepository from "./domain/repository/messageRepository";
 import LoggerService from "./domain/service/loggerService";
 import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
 import ChannelResolver from "./domain/service/channelResolver";
-import ReactionRoles from "./application/usecases/reactionRoles/reactionRoles";
 import LANGUAGE_ROLES_MAP from "./application/usecases/reactionRoles/consts/languageRolesMap";
 import AREA_ROLES_MAP from "./application/usecases/reactionRoles/consts/areaRolesMap";
 import EXTRA_AREA_ROLES_MAP from "./application/usecases/reactionRoles/consts/extraAreaRolesMap";
+import OldReactionsRolesUseCase from "./application/usecases/reactionRoles/oldReactionsRolesUseCase";
+import ReactionRolesUseCase from "./application/usecases/reactionRoles/reactionRolesUseCase";
+import { RoleInterfaceMap } from "./application/usecases/reactionRoles/interfaces/roleInterface";
 
 dotenv.config();
 
@@ -75,20 +77,39 @@ client.on("messageCreate", (messages: Message) => {
 });
 
 const messageRoles: {
-  [key: string]: ReactionRoles;
-} = {
-  [LANGUAGE_ROLE_MESSAGE_ID]: new ReactionRoles({ client, roles: LANGUAGE_ROLES_MAP }),
-  [AREA_ROLE_MESSAGE_ID]: new ReactionRoles({ client, roles: AREA_ROLES_MAP }),
-  [EXTRA_AREA_ROLE_MESSAGE_ID]: new ReactionRoles({ client, roles: EXTRA_AREA_ROLES_MAP }),
-};
+  messageId: string;
+  rolesMap: RoleInterfaceMap;
+}[] = [
+  {
+    messageId: LANGUAGE_ROLE_MESSAGE_ID,
+    rolesMap: LANGUAGE_ROLES_MAP,
+  },
+  {
+    messageId: AREA_ROLE_MESSAGE_ID,
+    rolesMap: AREA_ROLES_MAP,
+  },
+  {
+    messageId: EXTRA_AREA_ROLE_MESSAGE_ID,
+    rolesMap: EXTRA_AREA_ROLES_MAP,
+  },
+];
 
 client.once("ready", async () => {
   try {
     // Channel of messages id
     const channelId = CHANNEL_ROLE_MESSAGE_ID;
 
-    Object.keys(messageRoles).forEach(async (messageId) => {
-      messageRoles[messageId].execute({ channelId, messageId });
+    messageRoles.forEach(async (messageRole) => {
+      const { messageId } = messageRole;
+
+      new OldReactionsRolesUseCase({
+        chatService,
+        loggerService,
+        roles: messageRole.rolesMap,
+      }).execute({
+        channelId,
+        messageId,
+      });
     });
   } catch (error) {
     loggerService.log(error);
@@ -96,15 +117,33 @@ client.once("ready", async () => {
 });
 
 client.on("messageReactionAdd", (reaction, user) => {
-  if (Object.keys(messageRoles).find((messageId) => messageId === reaction.message.id)) {
-    messageRoles[reaction.message.id].userRoles({ type: "add", reaction, user });
-  }
+  const findedMessageRole = messageRoles.find((messageRole) => messageRole.messageId === reaction.message.id);
 
-  // reaction.message.id
+  if (findedMessageRole) {
+    new ReactionRolesUseCase({
+      chatService,
+      loggerService,
+      roles: findedMessageRole.rolesMap,
+    }).execute({
+      reaction,
+      user,
+      type: "add",
+    });
+  }
 });
 
 client.on("messageReactionRemove", (reaction, user) => {
-  if (Object.keys(messageRoles).find((messageId) => messageId === reaction.message.id)) {
-    messageRoles[reaction.message.id].userRoles({ type: "remove", reaction, user });
+  const findedMessageRole = messageRoles.find((messageRole) => messageRole.messageId === reaction.message.id);
+
+  if (findedMessageRole) {
+    new ReactionRolesUseCase({
+      chatService,
+      loggerService,
+      roles: findedMessageRole.rolesMap,
+    }).execute({
+      reaction,
+      user,
+      type: "remove",
+    });
   }
 });
