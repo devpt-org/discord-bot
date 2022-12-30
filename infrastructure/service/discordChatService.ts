@@ -1,4 +1,5 @@
 import {
+  ChannelType,
   Client,
   ClientUser,
   Guild,
@@ -21,7 +22,7 @@ export default class DiscordChatService implements ChatService {
       throw new Error(`Channel with id ${channelId} not found!`);
     }
 
-    if (!channel.isText()) {
+    if (channel.type !== ChannelType.GuildText) {
       throw new Error(`Channel with id ${channelId} is not a text channel!`);
     }
 
