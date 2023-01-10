@@ -7,6 +7,7 @@ import LoggerService from "./loggerService";
 import ChannelResolver from "./channelResolver";
 import KataService from "./kataService/kataService";
 import SendCodewarsLeaderboardToChannelUseCase from "../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
+import RolesMessageUseCase from "../../application/usecases/roles/rolesMessageUseCase";
 
 type CallbackFunctionVariadic = (...args: unknown[]) => void;
 
@@ -67,6 +68,7 @@ export default class CommandUseCaseResolver {
         new SendCodewarsLeaderboardToChannelUseCase(deps).execute({
           channelId: context.channelId,
         }),
+      "!roles": async () => new RolesMessageUseCase(deps).execute({ ...context }),
     };
 
     if (!commandUseCases[command]) {

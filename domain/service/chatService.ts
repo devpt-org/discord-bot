@@ -1,7 +1,21 @@
-import { ClientUser, Guild, GuildEmoji, GuildMember, Message, MessageReaction, TextChannel, User } from "discord.js";
+import {
+  ClientUser,
+  Guild,
+  GuildEmoji,
+  GuildMember,
+  Message,
+  MessageCreateOptions,
+  MessagePayload,
+  MessageReaction,
+  TextChannel,
+  User,
+} from "discord.js";
 
 export default interface ChatService {
-  sendMessageToChannel(message: string, channelId: string): void;
+  sendMessageToChannel(
+    message: string | MessagePayload | MessageCreateOptions,
+    channelId: string
+  ): Promise<Message<true>>;
 
   addReactionToMessage(message: Message, reaction: string | GuildEmoji): Promise<MessageReaction>;
 

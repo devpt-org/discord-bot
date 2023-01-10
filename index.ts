@@ -1,4 +1,4 @@
-import { GuildMember, Message, Client, GatewayIntentBits, Partials } from "discord.js";
+import { GuildMember, Message, Client, GatewayIntentBits, Partials, Events } from "discord.js";
 import * as dotenv from "dotenv";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
 import FileMessageRepository from "./infrastructure/repository/fileMessageRepository";
@@ -11,6 +11,7 @@ import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
 import ChannelResolver from "./domain/service/channelResolver";
 import KataService from "./domain/service/kataService/kataService";
 import CodewarsKataService from "./infrastructure/service/codewarsKataService";
+import InterationCreateUseCase from "./application/usecases/interations/interactionCreateUseCase";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.MessageContent,
   ],
   partials: [Partials.Message, Partials.Reaction],
 });
@@ -58,12 +60,17 @@ client.on("messageCreate", (messages: Message) => {
   if (!messages.content.startsWith(COMMAND_PREFIX)) return;
 
   const command = messages.content.split(" ")[0];
-
   try {
     useCaseResolver.resolveByCommand(command, {
       channelId: messages.channel.id,
+      guild: messages.guild,
+      member: messages.member,
     });
   } catch (error: unknown) {
     loggerService.log(error);
   }
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+  await new InterationCreateUseCase().execute(interaction);
 });

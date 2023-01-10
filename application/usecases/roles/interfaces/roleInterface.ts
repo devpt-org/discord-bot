@@ -1,7 +1,3 @@
-export interface RoleInterfaceMap {
-  [key: string]: RoleInterface;
-}
-
 /**
  * To use/map native emojis, you need to use discord chat
  * type \:emoji_name: and copy the result
@@ -9,6 +5,7 @@ export interface RoleInterfaceMap {
  * */
 export interface RoleInterface {
   id: string | null;
+  value: string;
   name: string;
   emoji: string;
   native?: boolean;
