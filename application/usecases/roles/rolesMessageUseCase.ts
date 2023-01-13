@@ -1,4 +1,4 @@
-import { ActionRowBuilder, GuildMember, StringSelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, Collection, Guild, GuildEmoji, GuildMember, StringSelectMenuBuilder } from "discord.js";
 import ChatService from "../../../domain/service/chatService";
 import ROLES_MESSAGES_MAP from "./consts/rolesMap";
 
@@ -9,7 +9,7 @@ export default class RolesMessageUseCase {
     this.chatService = chatService;
   }
 
-  async execute({ channelId, member }: { channelId: string; member: GuildMember | null }) {
+  async execute({ channelId, guild, member }: { channelId: string; guild: Guild | null; member: GuildMember | null }) {
     // Verify is ther member is a admin or moderator
     const allowedRoles = ["Admin", "Moderador"];
 
@@ -20,20 +20,29 @@ export default class RolesMessageUseCase {
       return;
     }
 
-    // await this.chatService.sendMessageToChannel(ROLES_MESSAGES_MAP.AREA_ROLES_MAP.text, channelId);
-    // ROLES_MESSAGES_MAP.AREA_ROLES_MAP.OPTIONS
-    // let emoji: string  = '✖️';
+    let emojis: Collection<string, GuildEmoji> | undefined;
 
-    // if (guild) {
-    //     const _emoji = guild.emojis.cache.find((e) => e.name === 'C_');
-    //     emoji = new APIMessageComponentEmoji
-    // }
+    if (guild) {
+      emojis = await guild.emojis.fetch();
+    }
 
     Object.values(ROLES_MESSAGES_MAP).forEach(async (message) => {
-      const areaOptions = message.OPTIONS.map((option) => ({
-        label: option.name,
-        value: option.value,
-      }));
+      const areaOptions = message.OPTIONS.map((option) => {
+        let emoji = option.native && option.emoji ? option.emoji : "✖️";
+        if (emojis && option.emoji) {
+          const findedEmoji = emojis.find((e) => e.name === option.emoji);
+
+          if (findedEmoji) {
+            emoji = findedEmoji.toString();
+          }
+        }
+
+        return {
+          label: option.name,
+          value: option.value,
+          emoji,
+        };
+      });
 
       const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
         new StringSelectMenuBuilder()
@@ -42,7 +51,7 @@ export default class RolesMessageUseCase {
           .addOptions(...areaOptions)
       );
 
-      this.chatService.sendMessageToChannel(
+      await this.chatService.sendMessageToChannel(
         {
           content: message.content,
           components: [row],
