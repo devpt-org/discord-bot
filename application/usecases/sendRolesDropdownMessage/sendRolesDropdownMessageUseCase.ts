@@ -1,6 +1,7 @@
-import { ActionRowBuilder, Collection, Guild, GuildEmoji, GuildMember, StringSelectMenuBuilder } from "discord.js";
-import ChatService from "../../domain/service/chatService";
-import ROLES_MESSAGES_MAP from "../../assets/consts/rolesMap";
+import { ActionRowBuilder, Collection, GuildEmoji, StringSelectMenuBuilder } from "discord.js";
+import ChatService from "../../../domain/service/chatService";
+import ROLES_MESSAGES_MAP from "../../../assets/consts/rolesMap";
+import { SendRolesDropdownMessageInput } from "./sendRolesDropdownMessageInput";
 
 export default class SendRolesDropdownMessageUseCase {
   private chatService: ChatService;
@@ -9,7 +10,7 @@ export default class SendRolesDropdownMessageUseCase {
     this.chatService = chatService;
   }
 
-  async execute({ channelId, guild, member }: { channelId: string; guild: Guild | null; member: GuildMember | null }) {
+  async execute({ channelId, guild, member }: SendRolesDropdownMessageInput) {
     // Verify is ther member is a admin or moderator
     const allowedRoles = ["Admin", "Moderador"];
 

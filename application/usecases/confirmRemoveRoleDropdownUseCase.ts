@@ -1,5 +1,5 @@
 import { ButtonInteraction, CacheType } from "discord.js";
-import { CostumMessage } from "../../domain/interface/message.interface";
+import { CustomMessage } from "../../domain/interface/customMessage.interface";
 import ChatService from "../../domain/service/chatService";
 
 export default class ConfirmRemoveRoleDropdownUseCase {
@@ -10,13 +10,16 @@ export default class ConfirmRemoveRoleDropdownUseCase {
   }
 
   async execute(interaction: ButtonInteraction<CacheType>) {
-    if (!interaction.guild) return;
+    if (!interaction.guildId) return;
 
     const roleId = interaction.customId.replaceAll("confirm-remove:", "");
 
-    this.chatService.removeMemberRole(interaction.guild.id, interaction.user.id, roleId);
+    this.chatService.removeMemberRole(interaction.guildId, interaction.user.id, roleId);
 
-    const message: CostumMessage = { content: "Posição removida", components: [] };
-    this.chatService.sendInteractionUpdate(interaction, message);
+    this.chatService.sendInteractionUpdate(interaction, ConfirmRemoveRoleDropdownUseCase.removedRoleMessage());
+  }
+
+  public static removedRoleMessage(): CustomMessage {
+    return { content: "Posição removida", components: [] };
   }
 }

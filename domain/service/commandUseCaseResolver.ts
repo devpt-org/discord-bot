@@ -7,7 +7,7 @@ import LoggerService from "./loggerService";
 import ChannelResolver from "./channelResolver";
 import KataService from "./kataService/kataService";
 import SendCodewarsLeaderboardToChannelUseCase from "../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
-import SendRolesDropdownMessageUseCase from "../../application/usecases/sendRolesDropdownMessageUseCase";
+import SendRolesDropdownMessageUseCase from "../../application/usecases/sendRolesDropdownMessage/sendRolesDropdownMessageUseCase";
 
 type CallbackFunctionVariadic = (...args: unknown[]) => void;
 
