@@ -11,7 +11,7 @@ import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
 import ChannelResolver from "./domain/service/channelResolver";
 import KataService from "./domain/service/kataService/kataService";
 import CodewarsKataService from "./infrastructure/service/codewarsKataService";
-import InterationCreateUseCase from "./application/usecases/interations/interactionCreateUseCase";
+import InterationCreateUseCaseResolver from "./domain/service/interactionCreateUseCaseResolver";
 
 dotenv.config();
 
@@ -72,5 +72,5 @@ client.on("messageCreate", (messages: Message) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  await new InterationCreateUseCase().execute(interaction);
+  await new InterationCreateUseCaseResolver({ chatService }).resolve(interaction);
 });

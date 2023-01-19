@@ -1,8 +1,8 @@
 import { ActionRowBuilder, Collection, Guild, GuildEmoji, GuildMember, StringSelectMenuBuilder } from "discord.js";
-import ChatService from "../../../domain/service/chatService";
-import ROLES_MESSAGES_MAP from "./consts/rolesMap";
+import ChatService from "../../domain/service/chatService";
+import ROLES_MESSAGES_MAP from "../../assets/consts/rolesMap";
 
-export default class RolesMessageUseCase {
+export default class SendRolesDropdownMessageUseCase {
   private chatService: ChatService;
 
   constructor({ chatService }: { chatService: ChatService }) {

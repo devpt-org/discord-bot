@@ -1,26 +1,11 @@
-import {
-  ChannelType,
-  Client,
-  ClientUser,
-  Guild,
-  GuildEmoji,
-  GuildMember,
-  Message,
-  MessageCreateOptions,
-  MessagePayload,
-  MessageReaction,
-  TextChannel,
-  User,
-} from "discord.js";
+import { ChannelType, Client, GuildMember, Interaction } from "discord.js";
+import { CostumMessage } from "../../domain/interface/message.interface";
 import ChatService from "../../domain/service/chatService";
 
 export default class DiscordChatService implements ChatService {
   constructor(private client: Client) {}
 
-  async sendMessageToChannel(
-    message: string | MessagePayload | MessageCreateOptions,
-    channelId: string
-  ): Promise<Message<true>> {
+  async sendMessageToChannel(message: string | CostumMessage, channelId: string): Promise<void> {
     const channel = await this.client.channels.fetch(channelId);
 
     if (channel === null) {
@@ -31,46 +16,38 @@ export default class DiscordChatService implements ChatService {
       throw new Error(`Channel with id ${channelId} is not a text channel!`);
     }
 
-    return channel.send(message);
+    channel.send(message);
   }
 
-  addReactionToMessage(message: Message, reaction: string | GuildEmoji): Promise<MessageReaction> {
-    return message.react(reaction);
+  private async getMember(guildId: string, userId: string): Promise<GuildMember> {
+    const guild = await this.client.guilds.fetch(guildId);
+
+    if (!guild) throw new Error(`Guild with id ${guildId} not found!`);
+
+    const member = await guild.members.fetch(userId);
+
+    if (!member) throw new Error(`Member with id ${userId} not found!`);
+
+    return member;
   }
 
-  getClientUser(): ClientUser | null {
-    return this.client.user;
+  async addMemberRole(guildId: string, userId: string, roleId: string): Promise<void> {
+    const member = await this.getMember(guildId, userId);
+
+    member.roles.add(roleId);
   }
 
-  getChannel(id: string): TextChannel | undefined {
-    const channel = this.client.channels.cache.get(id);
+  async removeMemberRole(guildId: string, userId: string, roleId: string): Promise<void> {
+    const member = await this.getMember(guildId, userId);
 
-    if (channel === undefined) {
-      return undefined;
-    }
-
-    return channel as TextChannel;
+    member.roles.remove(roleId);
   }
 
-  async getChannelMessage(channel: TextChannel, messageId: string): Promise<Message<boolean> | undefined> {
-    if (channel === undefined) {
-      return undefined;
-    }
-
-    const message = await channel.messages.fetch(messageId);
-
-    return message;
+  async sendInteractionReply(interaction: Interaction, message: string | CostumMessage): Promise<void> {
+    if (interaction.isRepliable()) interaction.reply(message);
   }
 
-  getMember(guild: Guild, user: User): Promise<GuildMember> {
-    return guild.members.fetch(user);
-  }
-
-  addMemberRole(member: GuildMember, roleId: string): Promise<GuildMember> {
-    return member.roles.add(roleId);
-  }
-
-  removeMemberRole(member: GuildMember, roleId: string): Promise<GuildMember> {
-    return member.roles.remove(roleId);
+  async sendInteractionUpdate(interaction: Interaction, message: string | CostumMessage): Promise<void> {
+    if (interaction.isButton()) interaction.update(message);
   }
 }

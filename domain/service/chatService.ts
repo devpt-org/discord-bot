@@ -1,33 +1,13 @@
-import {
-  ClientUser,
-  Guild,
-  GuildEmoji,
-  GuildMember,
-  Message,
-  MessageCreateOptions,
-  MessagePayload,
-  MessageReaction,
-  TextChannel,
-  User,
-} from "discord.js";
+import { CostumMessage } from "../interface/message.interface";
 
 export default interface ChatService {
-  sendMessageToChannel(
-    message: string | MessagePayload | MessageCreateOptions,
-    channelId: string
-  ): Promise<Message<true>>;
+  sendMessageToChannel(message: string | CostumMessage, channelId: string): Promise<void>;
 
-  addReactionToMessage(message: Message, reaction: string | GuildEmoji): Promise<MessageReaction>;
+  addMemberRole(guildId: string, userId: string, roleId: string): Promise<void>;
 
-  getClientUser(): ClientUser | null;
+  removeMemberRole(guildId: string, userId: string, roleId: string): Promise<void>;
 
-  getChannel(id: string): TextChannel | undefined;
+  sendInteractionReply(interaction: any, message: string | CostumMessage): Promise<void>;
 
-  getChannelMessage(channel: TextChannel, messageId: string): Promise<Message<boolean> | undefined>;
-
-  getMember(guild: Guild, user: User): Promise<GuildMember>;
-
-  addMemberRole(member: GuildMember, roleId: string): Promise<GuildMember>;
-
-  removeMemberRole(member: GuildMember, roleId: string): Promise<GuildMember>;
+  sendInteractionUpdate(interaction: any, message: string | CostumMessage): Promise<void>;
 }
