@@ -1,6 +1,8 @@
-import { ActionRowBuilder, Collection, GuildEmoji, StringSelectMenuBuilder } from "discord.js";
-import ChatService from "../../../domain/service/chatService";
+import { ActionRowBuilder, StringSelectMenuBuilder } from "discord.js";
 import ROLES_MESSAGES_MAP from "../../../assets/consts/rolesMap";
+import { RoleInterface } from "../../../assets/interfaces/roleInterface";
+import { CustomEmoji } from "../../../domain/interface/customEmoji.interface";
+import ChatService from "../../../domain/service/chatService";
 import { SendRolesDropdownMessageInput } from "./sendRolesDropdownMessageInput";
 
 export default class SendRolesDropdownMessageUseCase {
@@ -10,22 +12,20 @@ export default class SendRolesDropdownMessageUseCase {
     this.chatService = chatService;
   }
 
-  async execute({ channelId, guild, member }: SendRolesDropdownMessageInput) {
+  async execute({ channelId, guildId, memberId }: SendRolesDropdownMessageInput) {
+    if (!guildId || !memberId) return;
+
     // Verify is ther member is a admin or moderator
     const allowedRoles = ["Admin", "Moderador"];
 
-    const hasPermission = member?.roles.cache.some((role) => allowedRoles.includes(role.name));
+    const hasPermission = await this.chatService.isUserWithRoleName(guildId, memberId, allowedRoles);
 
     if (!hasPermission) {
       console.log(`User does not have permission to execute this command '!roles'`);
       return;
     }
 
-    let emojis: Collection<string, GuildEmoji> | undefined;
-
-    if (guild) {
-      emojis = await guild.emojis.fetch();
-    }
+    const emojis: CustomEmoji[] | undefined = (await this.chatService.getGuildEmojis(guildId)) || undefined;
 
     Object.values(ROLES_MESSAGES_MAP).forEach(async (message) => {
       const areaOptions = message.OPTIONS.map((option) => {
@@ -34,7 +34,7 @@ export default class SendRolesDropdownMessageUseCase {
           const findedEmoji = emojis.find((e) => e.name === option.emoji);
 
           if (findedEmoji) {
-            emoji = findedEmoji.toString();
+            emoji = findedEmoji.string || "✖️";
           }
         }
 
@@ -45,20 +45,36 @@ export default class SendRolesDropdownMessageUseCase {
         };
       });
 
-      const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-        new StringSelectMenuBuilder()
-          .setCustomId(message.id)
-          .setPlaceholder(message.placeholder)
-          .addOptions(...areaOptions)
-      );
-
       await this.chatService.sendMessageToChannel(
-        {
-          content: message.content,
-          components: [row],
-        },
+        SendRolesDropdownMessageUseCase.getRolesDropdownMessage(message, areaOptions),
         channelId
       );
     });
+  }
+
+  public static getRolesDropdownMessage(
+    message: {
+      id: string;
+      content: string;
+      placeholder: string;
+      OPTIONS: RoleInterface[];
+    },
+    areaOptions: {
+      label: string;
+      value: string;
+      emoji: string;
+    }[]
+  ) {
+    const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
+      new StringSelectMenuBuilder()
+        .setCustomId(message.id)
+        .setPlaceholder(message.placeholder)
+        .addOptions(...areaOptions)
+    );
+
+    return {
+      content: message.content,
+      components: [row],
+    };
   }
 }

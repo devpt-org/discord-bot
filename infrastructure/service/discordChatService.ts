@@ -1,4 +1,5 @@
 import { ChannelType, Client, Guild, GuildMember, Interaction } from "discord.js";
+import { CustomEmoji } from "../../domain/interface/customEmoji.interface";
 import { CustomMessage } from "../../domain/interface/customMessage.interface";
 import ChatService from "../../domain/service/chatService";
 
@@ -49,25 +50,25 @@ export default class DiscordChatService implements ChatService {
     return member;
   }
 
-  async isMemberWithRole(guildId: string, userId: string, roleId: string): Promise<boolean> {
+  async isUserWithRole(guildId: string, userId: string, roleId: string): Promise<boolean> {
     const member = await this.getMember(guildId, userId);
 
     return member.roles.cache.has(roleId);
   }
 
-  async isMemberWithRoleName(guildId: string, userId: string, role: string): Promise<boolean> {
+  async isUserWithRoleName(guildId: string, userId: string, roles: string[] = []): Promise<boolean> {
     const member = await this.getMember(guildId, userId);
 
-    return member.roles.cache.some((_role) => _role.name === role);
+    return roles.some((role) => member.roles.cache.some((_role) => _role.name === role));
   }
 
-  async addMemberRole(guildId: string, userId: string, roleId: string): Promise<void> {
+  async addUserRole(guildId: string, userId: string, roleId: string): Promise<void> {
     const member = await this.getMember(guildId, userId);
 
     member.roles.add(roleId);
   }
 
-  async removeMemberRole(guildId: string, userId: string, roleId: string): Promise<void> {
+  async removeUserRole(guildId: string, userId: string, roleId: string): Promise<void> {
     const member = await this.getMember(guildId, userId);
 
     member.roles.remove(roleId);
@@ -83,5 +84,17 @@ export default class DiscordChatService implements ChatService {
     if (!interaction.isButton()) throw new Error("Interaction is not a button!");
 
     interaction.update(message);
+  }
+
+  async getGuildEmojis(guildId: string): Promise<CustomEmoji[]> {
+    const guild = await this.getGuild(guildId);
+
+    const emojis = await guild.emojis.fetch();
+
+    return emojis.map((emoji) => ({
+      id: emoji.id,
+      name: emoji.name,
+      string: emoji.toString(),
+    }));
   }
 }

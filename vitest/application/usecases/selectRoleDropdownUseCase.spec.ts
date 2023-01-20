@@ -21,15 +21,15 @@ describe("select role dropdown use case", () => {
 
     mockChatService.getRoleIdByName.mockResolvedValue("855861944930402342");
     mockChatService.sendInteractionReply.mockResolvedValue();
-    mockChatService.addMemberRole.mockResolvedValue();
+    mockChatService.addUserRole.mockResolvedValue();
   });
 
   it("should send a interaction referring selected role is added", async () => {
-    mockChatService.isMemberWithRoleName.mockResolvedValue(false);
+    mockChatService.isUserWithRoleName.mockResolvedValue(false);
 
     const spyGetRoleIdByName = vi.spyOn(mockChatService, "getRoleIdByName");
-    const spyIsMemberWithRoleName = vi.spyOn(mockChatService, "isMemberWithRoleName");
-    const spyAddMemberRole = vi.spyOn(mockChatService, "addMemberRole");
+    const spyIsUserWithRoleName = vi.spyOn(mockChatService, "isUserWithRoleName");
+    const spyAddUserRole = vi.spyOn(mockChatService, "addUserRole");
     const spySendInteractionReply = vi.spyOn(mockChatService, "sendInteractionReply");
 
     await new SelectRoleDropdownUseCase({
@@ -40,17 +40,15 @@ describe("select role dropdown use case", () => {
     expect(spyGetRoleIdByName).toHaveBeenCalledTimes(1);
     expect(spyGetRoleIdByName).toHaveBeenCalledWith("855861944930402342", AREA_ROLES_MAP.SECURITY.name);
 
-    // isMemberWithRoleName
-    expect(spyIsMemberWithRoleName).toHaveBeenCalledTimes(1);
-    expect(spyIsMemberWithRoleName).toHaveBeenCalledWith(
-      "855861944930402342",
-      "855861944930402342",
-      AREA_ROLES_MAP.SECURITY.name
-    );
+    // isUserWithRoleName
+    expect(spyIsUserWithRoleName).toHaveBeenCalledTimes(1);
+    expect(spyIsUserWithRoleName).toHaveBeenCalledWith("855861944930402342", "855861944930402342", [
+      AREA_ROLES_MAP.SECURITY.name,
+    ]);
 
-    // addMemberRole
-    expect(spyAddMemberRole).toHaveBeenCalledTimes(1);
-    expect(spyAddMemberRole).toHaveBeenCalledWith("855861944930402342", "855861944930402342", "855861944930402342");
+    // addUserRole
+    expect(spyAddUserRole).toHaveBeenCalledTimes(1);
+    expect(spyAddUserRole).toHaveBeenCalledWith("855861944930402342", "855861944930402342", "855861944930402342");
 
     // sendInteractionReply
     expect(spySendInteractionReply).toHaveBeenCalledTimes(1);
@@ -61,11 +59,11 @@ describe("select role dropdown use case", () => {
   });
 
   it("should send a interaction referring already has the selected role", async () => {
-    mockChatService.isMemberWithRoleName.mockResolvedValue(true);
+    mockChatService.isUserWithRoleName.mockResolvedValue(true);
 
     const spyGetRoleIdByName = vi.spyOn(mockChatService, "getRoleIdByName");
-    const spyIsMemberWithRoleName = vi.spyOn(mockChatService, "isMemberWithRoleName");
-    const spyAddMemberRole = vi.spyOn(mockChatService, "addMemberRole");
+    const spyIsUserWithRoleName = vi.spyOn(mockChatService, "isUserWithRoleName");
+    const spyAddUserRole = vi.spyOn(mockChatService, "addUserRole");
     const spySendInteractionReply = vi.spyOn(mockChatService, "sendInteractionReply");
 
     await new SelectRoleDropdownUseCase({
@@ -76,16 +74,14 @@ describe("select role dropdown use case", () => {
     expect(spyGetRoleIdByName).toHaveBeenCalledTimes(1);
     expect(spyGetRoleIdByName).toHaveBeenCalledWith("855861944930402342", AREA_ROLES_MAP.SECURITY.name);
 
-    // isMemberWithRoleName
-    expect(spyIsMemberWithRoleName).toHaveBeenCalledTimes(1);
-    expect(spyIsMemberWithRoleName).toHaveBeenCalledWith(
-      "855861944930402342",
-      "855861944930402342",
-      AREA_ROLES_MAP.SECURITY.name
-    );
+    // isUserWithRoleName
+    expect(spyIsUserWithRoleName).toHaveBeenCalledTimes(1);
+    expect(spyIsUserWithRoleName).toHaveBeenCalledWith("855861944930402342", "855861944930402342", [
+      AREA_ROLES_MAP.SECURITY.name,
+    ]);
 
-    // addMemberRole
-    expect(spyAddMemberRole).toHaveBeenCalledTimes(0);
+    // addUserRole
+    expect(spyAddUserRole).toHaveBeenCalledTimes(0);
 
     // sendInteractionReply
     expect(spySendInteractionReply).toHaveBeenCalledTimes(1);

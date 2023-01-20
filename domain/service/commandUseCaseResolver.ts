@@ -68,7 +68,12 @@ export default class CommandUseCaseResolver {
         new SendCodewarsLeaderboardToChannelUseCase(deps).execute({
           channelId: context.channelId,
         }),
-      "!roles": async () => new SendRolesDropdownMessageUseCase(deps).execute({ ...context }),
+      "!roles": async () =>
+        new SendRolesDropdownMessageUseCase(deps).execute({
+          channelId: context.channelId,
+          guildId: context.guildId,
+          memberId: context.member?.id || null,
+        }),
     };
 
     if (!commandUseCases[command]) {

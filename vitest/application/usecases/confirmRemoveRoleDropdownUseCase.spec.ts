@@ -18,21 +18,21 @@ describe("send roles dropdown message use case", () => {
   beforeEach(() => {
     mockChatService = mock<ChatService>();
 
-    mockChatService.removeMemberRole.mockResolvedValue();
+    mockChatService.removeUserRole.mockResolvedValue();
     mockChatService.sendInteractionUpdate.mockResolvedValue();
   });
 
   it("should send a interaction referring selected role is removed", async () => {
-    const spyRemoveMemberRole = vi.spyOn(mockChatService, "removeMemberRole");
+    const spyRemoveUserRole = vi.spyOn(mockChatService, "removeUserRole");
     const spySendInteractionUpdate = vi.spyOn(mockChatService, "sendInteractionUpdate");
 
     await new ConfirmRemoveRoleDropdownUseCase({
       chatService: mockChatService,
     }).execute(mockInteraction);
 
-    // removeMemberRole
-    expect(spyRemoveMemberRole).toHaveBeenCalledTimes(1);
-    expect(spyRemoveMemberRole).toHaveBeenCalledWith("855861944930402342", "855861944930402342", "SECURITY");
+    // removeUserRole
+    expect(spyRemoveUserRole).toHaveBeenCalledTimes(1);
+    expect(spyRemoveUserRole).toHaveBeenCalledWith("855861944930402342", "855861944930402342", "SECURITY");
 
     // sendInteractionUpdate
     expect(spySendInteractionUpdate).toHaveBeenCalledTimes(1);

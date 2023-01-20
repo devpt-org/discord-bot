@@ -14,7 +14,7 @@ export default class ConfirmRemoveRoleDropdownUseCase {
 
     const roleId = interaction.customId.replaceAll("confirm-remove:", "");
 
-    this.chatService.removeMemberRole(interaction.guildId, interaction.user.id, roleId);
+    this.chatService.removeUserRole(interaction.guildId, interaction.user.id, roleId);
 
     this.chatService.sendInteractionUpdate(interaction, ConfirmRemoveRoleDropdownUseCase.removedRoleMessage());
   }

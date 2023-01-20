@@ -1,4 +1,4 @@
-import { Guild, GuildMember } from "discord.js";
+import { GuildMember } from "discord.js";
 
 export interface ChatMember {
   id: string;
@@ -6,7 +6,7 @@ export interface ChatMember {
 
 export interface Context {
   channelId: string;
-  guild: Guild | null;
+  guildId: string | null;
   member: GuildMember | null;
 }
 

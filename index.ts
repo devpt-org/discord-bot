@@ -63,7 +63,7 @@ client.on("messageCreate", (messages: Message) => {
   try {
     useCaseResolver.resolveByCommand(command, {
       channelId: messages.channel.id,
-      guild: messages.guild,
+      guildId: messages.guildId,
       member: messages.member,
     });
   } catch (error: unknown) {

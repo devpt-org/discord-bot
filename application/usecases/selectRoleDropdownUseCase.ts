@@ -26,11 +26,9 @@ export default class SelectRoleDropdownUseCase {
 
     if (!selectedRoleMap.id) return;
 
-    const hasRole = await this.chatService.isMemberWithRoleName(
-      interaction.guildId,
-      interaction.user.id,
-      selectedRoleMap.name
-    );
+    const hasRole = await this.chatService.isUserWithRoleName(interaction.guildId, interaction.user.id, [
+      selectedRoleMap.name,
+    ]);
 
     if (hasRole) {
       this.chatService.sendInteractionReply(
@@ -38,7 +36,7 @@ export default class SelectRoleDropdownUseCase {
         SelectRoleDropdownUseCase.confirmRemoveRoleMessage(selectedRoleMap.id, selectedRoleMap.name)
       );
     } else {
-      await this.chatService.addMemberRole(interaction.guildId, interaction.user.id, selectedRoleMap.id);
+      await this.chatService.addUserRole(interaction.guildId, interaction.user.id, selectedRoleMap.id);
 
       this.chatService.sendInteractionReply(
         interaction,
