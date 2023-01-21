@@ -13,43 +13,29 @@ export default class SendRolesDropdownMessageUseCase {
   }
 
   async execute({ channelId, guildId, memberId }: SendRolesDropdownMessageInput) {
-    if (!guildId || !memberId) return;
+    try {
+      if (!guildId || !memberId) return;
 
-    // Verify is ther member is a admin or moderator
-    const allowedRoles = ["Admin", "Moderador"];
+      // Verify is ther member is a admin or moderator
+      const allowedRoles = ["Admin", "Moderador"];
 
-    const hasPermission = await this.chatService.isUserWithRoleName(guildId, memberId, allowedRoles);
+      const hasPermission = await this.chatService.isUserWithRoleName(guildId, memberId, allowedRoles);
 
-    if (!hasPermission) {
-      console.log(`User does not have permission to execute this command '!roles'`);
-      return;
-    }
+      if (!hasPermission) {
+        console.log(`User does not have permission to execute this command '!roles'`);
+        return;
+      }
 
-    const emojis: CustomEmoji[] | undefined = (await this.chatService.getGuildEmojis(guildId)) || undefined;
+      const emojis: CustomEmoji[] | undefined = (await this.chatService.getGuildEmojis(guildId)) || undefined;
 
-    Object.values(ROLES_MESSAGES_MAP).forEach(async (message) => {
-      const areaOptions = message.OPTIONS.map((option) => {
-        let emoji = option.native && option.emoji ? option.emoji : "✖️";
-        if (emojis && option.emoji) {
-          const findedEmoji = emojis.find((e) => e.name === option.emoji);
+      Object.values(ROLES_MESSAGES_MAP).forEach(async (roleMessage) => {
+        const message = SendRolesDropdownMessageUseCase.getRolesDropdownMessage(roleMessage, emojis);
 
-          if (findedEmoji) {
-            emoji = findedEmoji.string || "✖️";
-          }
-        }
-
-        return {
-          label: option.name,
-          value: option.value,
-          emoji,
-        };
+        await this.chatService.sendMessageToChannel(message, channelId);
       });
-
-      await this.chatService.sendMessageToChannel(
-        SendRolesDropdownMessageUseCase.getRolesDropdownMessage(message, areaOptions),
-        channelId
-      );
-    });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   public static getRolesDropdownMessage(
@@ -59,12 +45,25 @@ export default class SendRolesDropdownMessageUseCase {
       placeholder: string;
       OPTIONS: RoleInterface[];
     },
-    areaOptions: {
-      label: string;
-      value: string;
-      emoji: string;
-    }[]
+    emojis: CustomEmoji[] | undefined
   ) {
+    const areaOptions = message.OPTIONS.map((option) => {
+      let emoji = option.native && option.emoji ? option.emoji : "✖️";
+      if (emojis && option.emoji) {
+        const findedEmoji = emojis.find((e) => e.name === option.emoji);
+
+        if (findedEmoji) {
+          emoji = findedEmoji.string || "✖️";
+        }
+      }
+
+      return {
+        label: option.name,
+        value: option.value,
+        emoji,
+      };
+    });
+
     const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
       new StringSelectMenuBuilder()
         .setCustomId(message.id)

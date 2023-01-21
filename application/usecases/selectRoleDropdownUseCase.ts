@@ -13,35 +13,39 @@ export default class SelectRoleDropdownUseCase {
   }
 
   async execute(interaction: StringSelectMenuInteraction<CacheType>) {
-    if (!interaction.guildId) return;
+    try {
+      if (!interaction.guildId) return;
 
-    const selected = interaction.values[0];
+      const selected = interaction.values[0];
 
-    const allowedRoles = { ...AREA_ROLES_MAP, ...LANGUAGE_ROLES_MAP, ...EXTRA_AREA_ROLES_MAP };
-    const selectedRoleMap = allowedRoles ? allowedRoles[selected] : undefined;
+      const allowedRoles = { ...AREA_ROLES_MAP, ...LANGUAGE_ROLES_MAP, ...EXTRA_AREA_ROLES_MAP };
+      const selectedRoleMap = allowedRoles ? allowedRoles[selected] : undefined;
 
-    if (!selectedRoleMap) return;
+      if (!selectedRoleMap) return;
 
-    selectedRoleMap.id = await this.chatService.getRoleIdByName(interaction.guildId, selectedRoleMap.name);
+      selectedRoleMap.id = await this.chatService.getRoleIdByName(interaction.guildId, selectedRoleMap.name);
 
-    if (!selectedRoleMap.id) return;
+      if (!selectedRoleMap.id) return;
 
-    const hasRole = await this.chatService.isUserWithRoleName(interaction.guildId, interaction.user.id, [
-      selectedRoleMap.name,
-    ]);
+      const hasRole = await this.chatService.isUserWithRoleName(interaction.guildId, interaction.user.id, [
+        selectedRoleMap.name,
+      ]);
 
-    if (hasRole) {
-      this.chatService.sendInteractionReply(
-        interaction,
-        SelectRoleDropdownUseCase.confirmRemoveRoleMessage(selectedRoleMap.id, selectedRoleMap.name)
-      );
-    } else {
-      await this.chatService.addUserRole(interaction.guildId, interaction.user.id, selectedRoleMap.id);
+      if (hasRole) {
+        this.chatService.sendInteractionReply(
+          interaction,
+          SelectRoleDropdownUseCase.confirmRemoveRoleMessage(selectedRoleMap.id, selectedRoleMap.name)
+        );
+      } else {
+        await this.chatService.addUserRole(interaction.guildId, interaction.user.id, selectedRoleMap.id);
 
-      this.chatService.sendInteractionReply(
-        interaction,
-        SelectRoleDropdownUseCase.addedRoleMessage(selectedRoleMap.name)
-      );
+        this.chatService.sendInteractionReply(
+          interaction,
+          SelectRoleDropdownUseCase.addedRoleMessage(selectedRoleMap.name)
+        );
+      }
+    } catch (error) {
+      console.error(error);
     }
   }
 

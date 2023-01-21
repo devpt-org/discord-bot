@@ -10,13 +10,17 @@ export default class ConfirmRemoveRoleDropdownUseCase {
   }
 
   async execute(interaction: ButtonInteraction<CacheType>) {
-    if (!interaction.guildId) return;
+    try {
+      if (!interaction.guildId) return;
 
-    const roleId = interaction.customId.replaceAll("confirm-remove:", "");
+      const roleId = interaction.customId.replaceAll("confirm-remove:", "");
 
-    this.chatService.removeUserRole(interaction.guildId, interaction.user.id, roleId);
+      this.chatService.removeUserRole(interaction.guildId, interaction.user.id, roleId);
 
-    this.chatService.sendInteractionUpdate(interaction, ConfirmRemoveRoleDropdownUseCase.removedRoleMessage());
+      this.chatService.sendInteractionUpdate(interaction, ConfirmRemoveRoleDropdownUseCase.removedRoleMessage());
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   public static removedRoleMessage(): CustomMessage {
