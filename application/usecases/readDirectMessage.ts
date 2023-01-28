@@ -1,14 +1,13 @@
 import { Message, Client, MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
 import sendDM from "../../application/usecases/sendMessageToChannel/sendDM";
-import ChatService from "../usecases/sendMessageToChannel/sendPerguntaToChannel";
-import DiscordChatService from "../../infrastructure/service/discordEmbedService";
-import * as _ from "lodash";
+import PerguntaChatService from "../usecases/sendMessageToChannel/sendPerguntaToChannel";
+import DiscordEmbedService from "../../infrastructure/service/discordEmbedService";
 
 class DirectMessage {
   constructor(private message: Message, private client: Client) {}
 
   async validate() {
-    const chatService: ChatService = new DiscordChatService(this.client);
+    //const chatService: PerguntaChatService = new DiscordEmbedService(this.client);
 
     if (this.message.author.id == this.client.user?.id) {
       return false;
@@ -27,7 +26,7 @@ class DirectMessage {
     }
   }
   async messageApprove() {
-    const chatService: ChatService = new DiscordChatService(this.client);
+    const chatService: PerguntaChatService = new DiscordEmbedService(this.client);
     const modChannel = "987719981443723266";
     const sentence = this.message.content.split(" ").slice(1).join(" ");
     const userName = this.message.author.username;
