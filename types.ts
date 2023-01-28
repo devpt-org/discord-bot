@@ -9,4 +9,5 @@ export interface Context {
 export enum ChannelSlug {
   ENTRANCE = "ENTRANCE",
   JOBS = "JOBS",
+  QUESTION = "QUESTION",
 }

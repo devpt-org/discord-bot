@@ -3,6 +3,7 @@ import { ChannelSlug } from "../../types";
 const fallbackChannelIds: Record<ChannelSlug, string> = {
   [ChannelSlug.ENTRANCE]: "855861944930402344",
   [ChannelSlug.JOBS]: "876826576749215744",
+  [ChannelSlug.QUESTION]: "876826576749215744",
 };
 
 export default class ChannelResolver {
