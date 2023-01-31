@@ -24,6 +24,7 @@ class DirectMessage {
   }
 
   async messageApprove() {
+    const canalPerguntaAnonima = this.client.channels.cache.get("1066328934825865216");
     const chatService: PerguntaChatService = new DiscordEmbedService(this.client);
     const modChannel = "987719981443723266";
     const sentence = this.message.content.split(" ").slice(1).join(" ");
@@ -37,7 +38,7 @@ class DirectMessage {
     const dmSent = sendDM(
       this.client,
       this.message.author.id,
-      "A tua pergunta foi colocada com sucesso.\nApós aprovação poderás visualizar no #canal."
+      `A tua pergunta foi colocada com sucesso.\nApós aprovação poderás visualizar no ${canalPerguntaAnonima} `
     );
     if (!dmSent) console.log("dm não enviada");
   }
