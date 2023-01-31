@@ -12,8 +12,6 @@ import ChannelResolver from "./domain/service/channelResolver";
 import KataService from "./domain/service/kataService/kataService";
 import CodewarsKataService from "./infrastructure/service/codewarsKataService";
 import DirectMessage from "./application/usecases/readDirectMessage";
-import { channel } from "diagnostics_channel";
-import { any } from "vitest-mock-extended";
 
 dotenv.config();
 
@@ -76,18 +74,24 @@ client.on("messageCreate", (messages: Message) => {
 client.on("message", async (message) => {
   const directMessage = new DirectMessage(message, client);
   const validationCheck = await directMessage.validate();
-
-  validationCheck && directMessage.messageApprove();
+  if (validationCheck) {
+    directMessage.messageApprove();
+  }
 });
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isButton()) return;
-  const messageId = interaction.message.id;
-  const channelId = interaction.channelId;
-  const userName = interaction.member?.user.username;
-  const anonChannel = client.channels.cache.get(channelId);
 
-  const messageContent = interaction.message.embeds[0].description;
+  const {
+    message: {
+      id: messageId,
+      embeds: [{ description: messageContent }],
+    },
+    channelId,
+  } = interaction;
+
+  const userName = interaction.member?.user.username;
+
   if (!messageContent) return;
   const messageApprovedEmbed = new MessageEmbed()
     .setColor("#0099ff")
@@ -98,16 +102,14 @@ client.on("interactionCreate", async (interaction) => {
   switch (interaction.customId) {
     case "bt1":
       {
-        const sentence = "PERGUNTA ANÓNIMA:\n" + messageContent;
+        const sentence = `PERGUNTA ANÓNIMA:\n${messageContent}`;
         chatService.sendMessageToChannel(sentence, canalPerguntaAnonima);
         interaction.update({ components: [], embeds: [messageApprovedEmbed] });
       }
       break;
 
     case "bt2":
-      {
-        chatService.deleteMessageFromChannel(messageId, channelId);
-      }
+      chatService.deleteMessageFromChannel(messageId, channelId);
       break;
     default: {
       console.log("default");

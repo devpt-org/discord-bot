@@ -1,4 +1,4 @@
-import { Client, MessageEmbed } from "discord.js";
+import { Client } from "discord.js";
 import ChatService from "../../domain/service/chatService";
 
 export default class DiscordChatService implements ChatService {
@@ -17,8 +17,7 @@ export default class DiscordChatService implements ChatService {
     channel.send(message);
   }
 
-  async deleteMessageFromChannel(messageId:string,channelId: string) : Promise<void>{
-    
+  async deleteMessageFromChannel(messageId: string, channelId: string): Promise<void> {
     const channel = await this.client.channels.fetch(channelId);
 
     if (channel === null) {
@@ -29,6 +28,6 @@ export default class DiscordChatService implements ChatService {
       throw new Error(`Channel with id ${channelId} is not a text channel!`);
     }
 
-    channel.messages.delete(messageId)
+    channel.messages.delete(messageId);
   }
 }
