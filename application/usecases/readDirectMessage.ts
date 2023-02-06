@@ -1,14 +1,16 @@
 import { Message, Client, MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
-import sendDM from "./sendMessageToChannel/sendDM";
 import { ChannelSlug } from "../../types";
-import PerguntaChatService from "./sendMessageToChannel/sendPerguntaToChannel";
+import QuestionChatService from "./sendMessageToChannel/sendPerguntaToChannel";
 import DiscordEmbedService from "../../infrastructure/service/discordEmbedService";
+import ChatService from "../../domain/service/chatService";
+import DiscordChatService from "../../infrastructure/service/discordChatService";
 import ChannelResolver from "../../domain/service/channelResolver";
 
 class DirectMessage {
   constructor(private message: Message, private client: Client, private channelResolver: ChannelResolver) {}
 
   async validate() {
+    const chatService: ChatService = new DiscordChatService(this.client);
     if (this.message.author.id === this.client.user?.id) {
       return false;
     }
@@ -21,13 +23,14 @@ class DirectMessage {
     ) {
       return true;
     }
-    sendDM(this.client, this.message.author.id, "Por favor usa o seguinte formato:\n!pergunta <mensagem>");
+    chatService.sendDM(this.message.author.id, "Por favor usa o seguinte formato:\n!pergunta <mensagem>");
     return false;
   }
 
-  async messageApprove(modChannel: string) {
+  async messageApprove() {
+    const chatService: ChatService = new DiscordChatService(this.client);
     const channelAnonQuestion = this.client.channels.cache.get(this.channelResolver.getBySlug(ChannelSlug.QUESTION));
-    const chatService: PerguntaChatService = new DiscordEmbedService(this.client);
+    const questionChatService: QuestionChatService = new DiscordEmbedService(this.client);
     const sentence = this.message.content.split(" ").slice(1).join(" ");
     const buttons = new MessageActionRow().addComponents(
       new MessageButton().setLabel("Aprovar").setStyle("SUCCESS").setCustomId("bt1"),
@@ -35,14 +38,16 @@ class DirectMessage {
     );
     const mensagem = new MessageEmbed().setColor("#0099ff").setTitle("Pergunta Anónima").setDescription(sentence);
 
-    await chatService.sendEmbedToChannel(mensagem, buttons, this.channelResolver.getBySlug(ChannelSlug.MOD_CHANNEL));
+    await questionChatService.sendEmbedToChannel(
+      mensagem,
+      buttons,
+      this.channelResolver.getBySlug(ChannelSlug.MOD_CHANNEL)
+    );
 
-    const dmSent = sendDM(
-      this.client,
+    await chatService.sendDM(
       this.message.author.id,
       `A tua pergunta foi colocada com sucesso.\nApós aprovação poderás visualizar no ${channelAnonQuestion} `
     );
-    if (!dmSent) console.log("dm não enviada");
   }
 }
 

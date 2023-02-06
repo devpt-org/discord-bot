@@ -75,7 +75,7 @@ client.on("message", async (message) => {
   const directMessage = new DirectMessage(message, client, channelResolver);
   const validationCheck = await directMessage.validate();
   if (validationCheck) {
-    directMessage.messageApprove(channelResolver.getBySlug(ChannelSlug.MOD_CHANNEL));
+    directMessage.messageApprove();
   }
 });
 
@@ -105,11 +105,16 @@ client.on("interactionCreate", async (interaction) => {
         const sentence = `PERGUNTA ANÓNIMA:\n${messageContent}`;
         chatService.sendMessageToChannel(sentence, channelResolver.getBySlug(ChannelSlug.QUESTION));
         interaction.update({ components: [], embeds: [messageApprovedEmbed] });
+        chatService.sendDM(interaction.user.id, "A tua mensagem foi aprovada.");
       }
       break;
 
     case "bt2":
       chatService.deleteMessageFromChannel(messageId, channelId);
+      chatService.sendDM(
+        interaction.user.id,
+        "A tua mensagem não foi aprovada.\nVerifica se está de acordo com as regras."
+      );
       break;
     default: {
       console.log("default");

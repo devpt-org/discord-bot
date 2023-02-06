@@ -30,4 +30,15 @@ export default class DiscordChatService implements ChatService {
 
     channel.messages.delete(messageId);
   }
+
+  async sendDM(userId: string, message: string): Promise<boolean> {
+    try {
+      const user = await this.client.users.fetch(userId);
+      await user.send(message);
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
 }
