@@ -1,5 +1,6 @@
 import { GuildMember, Message, Client, Intents, MessageEmbed } from "discord.js";
 import * as dotenv from "dotenv";
+import { ChannelSlug } from "./types";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
 import FileMessageRepository from "./infrastructure/repository/fileMessageRepository";
 import ChatService from "./domain/service/chatService";
@@ -28,7 +29,6 @@ const client = new Client({
   ],
 });
 
-const canalPerguntaAnonima = "1066328934825865216";
 const messageRepository: MessageRepository = new FileMessageRepository();
 const chatService: ChatService = new DiscordChatService(client);
 const loggerService: LoggerService = new ConsoleLoggerService();
@@ -72,10 +72,10 @@ client.on("messageCreate", (messages: Message) => {
 });
 
 client.on("message", async (message) => {
-  const directMessage = new DirectMessage(message, client);
+  const directMessage = new DirectMessage(message, client, channelResolver);
   const validationCheck = await directMessage.validate();
   if (validationCheck) {
-    directMessage.messageApprove();
+    directMessage.messageApprove(channelResolver.getBySlug(ChannelSlug.MOD_CHANNEL));
   }
 });
 
@@ -103,7 +103,7 @@ client.on("interactionCreate", async (interaction) => {
     case "bt1":
       {
         const sentence = `PERGUNTA ANÓNIMA:\n${messageContent}`;
-        chatService.sendMessageToChannel(sentence, canalPerguntaAnonima);
+        chatService.sendMessageToChannel(sentence, channelResolver.getBySlug(ChannelSlug.QUESTION));
         interaction.update({ components: [], embeds: [messageApprovedEmbed] });
       }
       break;
