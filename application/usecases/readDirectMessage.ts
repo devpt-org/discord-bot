@@ -6,25 +6,35 @@ import ChatService from "../../domain/service/chatService";
 import DiscordChatService from "../../infrastructure/service/discordChatService";
 import ChannelResolver from "../../domain/service/channelResolver";
 
+const askedRecently = new Set();
 class DirectMessage {
   constructor(private message: Message, private client: Client, private channelResolver: ChannelResolver) {}
 
   async validate() {
-    const chatService: ChatService = new DiscordChatService(this.client);
-    if (this.message.author.id === this.client.user?.id) {
+    if (askedRecently.has(this.message.author.id)) {
+      this.message.channel.send("Ainda não podes enviar outra pergunta. Tenta mais tarde.");
+    } else {
+      const chatService: ChatService = new DiscordChatService(this.client);
+      if (this.message.author.id === this.client.user?.id) {
+        return false;
+      }
+
+      if (
+        this.message.channel.type === "DM" &&
+        this.message.content.startsWith("!pergunta") &&
+        this.message.content.split(" ").length > 1 &&
+        this.message.content.length <= 1500
+      ) {
+        askedRecently.add(this.message.author.id);
+        setTimeout(() => {
+          askedRecently.delete(this.message.author.id);
+        }, 60000);
+        return true;
+      }
+      chatService.sendDM(this.message.author.id, "Por favor usa o seguinte formato:\n!pergunta <mensagem>");
       return false;
     }
-
-    if (
-      this.message.channel.type === "DM" &&
-      this.message.content.startsWith("!pergunta") &&
-      this.message.content.split(" ").length > 1 &&
-      this.message.content.length <= 1500
-    ) {
-      return true;
-    }
-    chatService.sendDM(this.message.author.id, "Por favor usa o seguinte formato:\n!pergunta <mensagem>");
-    return false;
+    return true;
   }
 
   async messageApprove() {
