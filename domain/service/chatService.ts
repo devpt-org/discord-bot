@@ -14,9 +14,9 @@ export default interface ChatService {
 
   removeUserRole(guildId: string, userId: string, roleId: string): Promise<void>;
 
-  sendInteractionReply(interaction: unknown, message: string | CustomMessage): Promise<void>;
+  sendInteractionReply<T, K>(interaction: T, message: K): Promise<void>;
 
-  sendInteractionUpdate(interaction: unknown, message: string | CustomMessage): Promise<void>;
+  sendInteractionUpdate<T, K>(interaction: T, message: K): Promise<void>;
 
   getGuildEmojis(guildId: string): Promise<CustomEmoji[]>;
 }
