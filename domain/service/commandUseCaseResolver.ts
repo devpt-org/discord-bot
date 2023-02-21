@@ -56,7 +56,7 @@ export default class CommandUseCaseResolver {
       "!ja": async () =>
         new SendMessageToChannelUseCase(deps).execute({
           channelId: context.channelId,
-          message: ":point_right: https://dontasktoask.com/pt-pt/",
+          message: "Olá! Experimenta fazer a pergunta diretamente e contar o que já tentaste! Sabe mais aqui :point_right: https://dontasktoask.com/pt-pt/",
         }),
       "!oc": async () =>
         new SendMessageToChannelUseCase(deps).execute({
