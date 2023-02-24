@@ -4,6 +4,8 @@ import { ChannelSlug } from "./types";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
 import FileMessageRepository from "./infrastructure/repository/fileMessageRepository";
 import ChatService from "./domain/service/chatService";
+import DiscordEmbedService from "./infrastructure/service/discordEmbedService";
+import QuestionChatService from "./application/usecases/sendMessageToChannel/sendPerguntaToChannel";
 import DiscordChatService from "./infrastructure/service/discordChatService";
 import ConsoleLoggerService from "./infrastructure/service/consoleLoggerService";
 import MessageRepository from "./domain/repository/messageRepository";
@@ -28,7 +30,7 @@ const client = new Client({
     Intents.FLAGS.GUILD_MESSAGES,
   ],
 });
-
+const questionChatService: QuestionChatService = new DiscordEmbedService(client);
 const messageRepository: MessageRepository = new FileMessageRepository();
 const chatService: ChatService = new DiscordChatService(client);
 const loggerService: LoggerService = new ConsoleLoggerService();
@@ -72,10 +74,10 @@ client.on("messageCreate", (messages: Message) => {
 });
 
 client.on("message", async (message) => {
-  const directMessage = new DirectMessage(message, client, channelResolver, chatService);
+  const directMessage = new DirectMessage(message, client, channelResolver, chatService, questionChatService);
 
   if (await directMessage.isValid()) {
-    directMessage.messageApprove();
+    directMessage.approveMessage();
   }
 });
 

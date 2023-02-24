@@ -1,9 +1,7 @@
 import { Message, Client, MessageEmbed, MessageActionRow, MessageButton } from "discord.js";
 import { ChannelSlug } from "../../types";
 import QuestionChatService from "./sendMessageToChannel/sendPerguntaToChannel";
-import DiscordEmbedService from "../../infrastructure/service/discordEmbedService";
 import ChatService from "../../domain/service/chatService";
-import DiscordChatService from "../../infrastructure/service/discordChatService";
 import ChannelResolver from "../../domain/service/channelResolver";
 
 const askedRecently = new Set();
@@ -13,7 +11,8 @@ class ReadDirectMessageUseCase {
     private message: Message,
     private client: Client,
     private channelResolver: ChannelResolver,
-    private chatService: ChatService
+    private chatService: ChatService,
+    private questionChatService: QuestionChatService
   ) {}
 
   async isValid() {
@@ -44,10 +43,9 @@ class ReadDirectMessageUseCase {
     return false;
   }
 
-  async messageApprove() {
-    const chatService: ChatService = new DiscordChatService(this.client);
+  async approveMessage(): Promise<void> {
     const channelAnonQuestion = this.client.channels.cache.get(this.channelResolver.getBySlug(ChannelSlug.QUESTION));
-    const questionChatService: QuestionChatService = new DiscordEmbedService(this.client);
+   // const questionChatService: QuestionChatService = new DiscordEmbedService(this.client);
     const originalUserId = this.message.author.id;
     const sentence = this.message.content.split(" ").slice(1).join(" ");
     const buttons = new MessageActionRow().addComponents(
@@ -56,13 +54,13 @@ class ReadDirectMessageUseCase {
     );
     const mensagem = new MessageEmbed().setColor("#0099ff").setTitle("Pergunta Anónima").setDescription(sentence);
 
-    await questionChatService.sendEmbedToChannel(
+    await this.questionChatService.sendEmbedToChannel(
       mensagem,
       buttons,
       this.channelResolver.getBySlug(ChannelSlug.MOD_CHANNEL)
     );
 
-    await chatService.sendDirectMessageToUser(
+    await this.chatService.sendDirectMessageToUser(
       this.message.author.id,
       `A tua pergunta foi colocada com sucesso.\nApós aprovação poderás visualizar no ${channelAnonQuestion} `
     );
