@@ -115,5 +115,7 @@ client.on("interactionCreate", async (interaction) => {
         "A tua mensagem não foi aprovada.\nVerifica se está de acordo com as regras."
       );
       break;
+    default:
+      break;
   }
 });

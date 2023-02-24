@@ -20,29 +20,27 @@ class ReadDirectMessageUseCase {
     if (askedRecently.has(this.message.author.id) && this.message.channel.type === "DM") {
       this.message.channel.send("Ainda não podes enviar outra pergunta. Tenta mais tarde.");
       return false;
-    } else {
-      if (this.message.author.id === this.client.user?.id) {
-        return false;
-      }
-      if (
-        this.message.channel.type === "DM" &&
-        this.message.content.startsWith("!pergunta") &&
-        this.message.content.split(" ").length > 1 &&
-        this.message.content.length <= messageSize
-      ) {
-        askedRecently.add(this.message.author.id);
-        setTimeout(() => {
-          askedRecently.delete(this.message.author.id);
-        }, 60000);
-        return true;
-      } else if (this.message.channel.type === "DM") {
-        this.chatService.sendDirectMessageToUser(
-          this.message.author.id,
-          "Por favor usa o seguinte formato:\n!pergunta <mensagem>"
-        );
-        return false;
-      }
     }
+    if (this.message.author.id === this.client.user?.id || this.message.channel.type !== "DM") {
+      return false;
+    }
+    if (
+      this.message.channel.type === "DM" &&
+      this.message.content.startsWith("!pergunta") &&
+      this.message.content.split(" ").length > 1 &&
+      this.message.content.length <= messageSize
+    ) {
+      askedRecently.add(this.message.author.id);
+      setTimeout(() => {
+        askedRecently.delete(this.message.author.id);
+      }, 60000);
+      return true;
+    }
+    this.chatService.sendDirectMessageToUser(
+      this.message.author.id,
+      "Por favor usa o seguinte formato:\n!pergunta <mensagem>"
+    );
+
     return false;
   }
 
