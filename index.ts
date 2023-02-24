@@ -72,9 +72,9 @@ client.on("messageCreate", (messages: Message) => {
 });
 
 client.on("message", async (message) => {
-  const directMessage = new DirectMessage(message, client, channelResolver);
-  const validationCheck = await directMessage.validate();
-  if (validationCheck) {
+  const directMessage = new DirectMessage(message, client, channelResolver, chatService);
+
+  if (await directMessage.isValid()) {
     directMessage.messageApprove();
   }
 });
@@ -91,7 +91,6 @@ client.on("interactionCreate", async (interaction) => {
   } = interaction;
 
   const userName = interaction.member?.user.username;
-
   if (!messageContent) return;
   const messageApprovedEmbed = new MessageEmbed()
     .setColor("#0099ff")
@@ -99,25 +98,22 @@ client.on("interactionCreate", async (interaction) => {
     .setDescription(messageContent)
     .setFooter({ text: `Aprovado por ${userName}` });
 
-  switch (interaction.customId) {
-    case "bt1":
+  switch (interaction.customId.slice(0, 3)) {
+    case "apr":
       {
         const sentence = `PERGUNTA ANÓNIMA:\n${messageContent}`;
         chatService.sendMessageToChannel(sentence, channelResolver.getBySlug(ChannelSlug.QUESTION));
         interaction.update({ components: [], embeds: [messageApprovedEmbed] });
-        chatService.sendDM(interaction.user.id, "A tua mensagem foi aprovada.");
+        chatService.sendDirectMessageToUser(interaction.customId.slice(3), "A tua mensagem foi aprovada.");
       }
       break;
 
-    case "bt2":
+    case "rej":
       chatService.deleteMessageFromChannel(messageId, channelId);
-      chatService.sendDM(
-        interaction.user.id,
+      chatService.sendDirectMessageToUser(
+        interaction.customId.slice(3),
         "A tua mensagem não foi aprovada.\nVerifica se está de acordo com as regras."
       );
       break;
-    default: {
-      console.log("default");
-    }
   }
 });
