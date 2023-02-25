@@ -1,25 +1,30 @@
-import { ButtonInteraction, CacheType } from "discord.js";
+import { InteractionInterface } from "@/domain/model/interaction.interface";
+import LoggerService from "@/domain/service/loggerService";
 import { CustomMessage } from "../../domain/interface/customMessage.interface";
 import ChatService from "../../domain/service/chatService";
 
 export default class ConfirmRemoveRoleDropdownUseCase {
   private chatService: ChatService;
+  private loggerService: LoggerService;
 
-  constructor({ chatService }: { chatService: ChatService }) {
+  constructor({ chatService, loggerService }: { chatService: ChatService; loggerService: LoggerService }) {
     this.chatService = chatService;
+    this.loggerService = loggerService;
   }
 
-  async execute(interaction: ButtonInteraction<CacheType>) {
+  async execute(interaction: InteractionInterface) {
+    const guildId = interaction.getGuildId();
+
+    if (!guildId) return;
+
+    const roleId = interaction.getCustomId().replaceAll("confirm-remove:", "");
+
     try {
-      if (!interaction.guildId) return;
-
-      const roleId = interaction.customId.replaceAll("confirm-remove:", "");
-
-      this.chatService.removeUserRole(interaction.guildId, interaction.user.id, roleId);
+      this.chatService.removeUserRole(guildId, interaction.getUserId(), roleId);
 
       this.chatService.sendInteractionUpdate(interaction, ConfirmRemoveRoleDropdownUseCase.removedRoleMessage());
     } catch (error) {
-      console.error(error);
+      this.loggerService.log(error);
     }
   }
 

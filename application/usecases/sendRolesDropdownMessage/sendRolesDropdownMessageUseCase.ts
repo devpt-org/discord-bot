@@ -1,15 +1,28 @@
-import { ActionRowBuilder, StringSelectMenuBuilder } from "discord.js";
+import { ActionRowBuilderInterface, ActionRowOptions } from "@/domain/builder/action-row.builder.interface";
+import LoggerService from "@/domain/service/loggerService";
 import ROLES_MESSAGES_MAP from "../../../assets/consts/rolesMap";
 import { RoleInterface } from "../../../assets/interfaces/roleInterface";
 import { CustomEmoji } from "../../../domain/interface/customEmoji.interface";
 import ChatService from "../../../domain/service/chatService";
 import { SendRolesDropdownMessageInput } from "./sendRolesDropdownMessageInput";
 
-export default class SendRolesDropdownMessageUseCase {
+export default class SendRolesDropdownMessageUseCase<A> {
   private chatService: ChatService;
+  private loggerService: LoggerService;
+  private actionRowBuilder: ActionRowBuilderInterface<A>;
 
-  constructor({ chatService }: { chatService: ChatService }) {
+  constructor({
+    chatService,
+    loggerService,
+    actionRowBuilder,
+  }: {
+    chatService: ChatService;
+    loggerService: LoggerService;
+    actionRowBuilder: ActionRowBuilderInterface<A>;
+  }) {
     this.chatService = chatService;
+    this.loggerService = loggerService;
+    this.actionRowBuilder = actionRowBuilder;
   }
 
   async execute({ channelId, guildId, memberId }: SendRolesDropdownMessageInput) {
@@ -29,25 +42,29 @@ export default class SendRolesDropdownMessageUseCase {
       const emojis: CustomEmoji[] | undefined = (await this.chatService.getGuildEmojis(guildId)) || undefined;
 
       Object.values(ROLES_MESSAGES_MAP).forEach(async (roleMessage) => {
-        const message = SendRolesDropdownMessageUseCase.getRolesDropdownMessage(roleMessage, emojis);
+        const areaOptions = SendRolesDropdownMessageUseCase.getOptionsWithEmojis(roleMessage.OPTIONS, emojis);
 
-        await this.chatService.sendMessageToChannel(message, channelId);
+        const row = this.actionRowBuilder
+          .setCustomId(roleMessage.id)
+          .setLabel(roleMessage.placeholder)
+          .setOptions(areaOptions)
+          .build();
+
+        await this.chatService.sendMessageToChannel(
+          {
+            content: roleMessage.content,
+            components: [row],
+          },
+          channelId
+        );
       });
     } catch (error) {
-      console.log(error);
+      this.loggerService.log(error);
     }
   }
 
-  public static getRolesDropdownMessage(
-    message: {
-      id: string;
-      content: string;
-      placeholder: string;
-      OPTIONS: RoleInterface[];
-    },
-    emojis: CustomEmoji[] | undefined
-  ) {
-    const areaOptions = message.OPTIONS.map((option) => {
+  public static getOptionsWithEmojis(options: RoleInterface[], emojis: CustomEmoji[] | undefined): ActionRowOptions[] {
+    const areaOptions = options.map((option) => {
       let emoji = option.native && option.emoji ? option.emoji : "✖️";
       if (emojis && option.emoji) {
         const findedEmoji = emojis.find((e) => e.name === option.emoji);
@@ -64,16 +81,6 @@ export default class SendRolesDropdownMessageUseCase {
       };
     });
 
-    const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(
-      new StringSelectMenuBuilder()
-        .setCustomId(message.id)
-        .setPlaceholder(message.placeholder)
-        .addOptions(...areaOptions)
-    );
-
-    return {
-      content: message.content,
-      components: [row],
-    };
+    return areaOptions;
   }
 }

@@ -8,10 +8,11 @@ import ChannelResolver from "./channelResolver";
 import KataService from "./kataService/kataService";
 import SendCodewarsLeaderboardToChannelUseCase from "../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
 import SendRolesDropdownMessageUseCase from "../../application/usecases/sendRolesDropdownMessage/sendRolesDropdownMessageUseCase";
+import { ActionRowBuilderInterface } from "../builder/action-row.builder.interface";
 
 type CallbackFunctionVariadic = (...args: unknown[]) => void;
 
-export default class CommandUseCaseResolver {
+export default class CommandUseCaseResolver<A> {
   private messageRepository: MessageRepository;
 
   private chatService: ChatService;
@@ -22,24 +23,29 @@ export default class CommandUseCaseResolver {
 
   private kataService: KataService;
 
+  private actionRowBuilder: ActionRowBuilderInterface<A>;
+
   constructor({
     messageRepository,
     chatService,
     loggerService,
     channelResolver,
     kataService,
+    actionRowBuilder,
   }: {
     messageRepository: MessageRepository;
     chatService: ChatService;
     loggerService: LoggerService;
     channelResolver: ChannelResolver;
     kataService: KataService;
+    actionRowBuilder: ActionRowBuilderInterface<A>;
   }) {
     this.messageRepository = messageRepository;
     this.chatService = chatService;
     this.loggerService = loggerService;
     this.channelResolver = channelResolver;
     this.kataService = kataService;
+    this.actionRowBuilder = actionRowBuilder;
   }
 
   resolveByCommand(command: string, context: Context): void {
@@ -51,6 +57,7 @@ export default class CommandUseCaseResolver {
       loggerService: this.loggerService,
       channelResolver: this.channelResolver,
       kataService: this.kataService,
+      actionRowBuilder: this.actionRowBuilder,
     };
 
     const commandUseCases: Record<string, CallbackFunctionVariadic> = {

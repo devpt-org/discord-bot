@@ -1,12 +1,5 @@
-import {
-  ChannelType,
-  Client,
-  Guild,
-  GuildMember,
-  Interaction,
-  InteractionReplyOptions,
-  InteractionUpdateOptions,
-} from "discord.js";
+import { InteractionInterface } from "@/domain/model/interaction.interface";
+import { ChannelType, Client, Guild, GuildMember } from "discord.js";
 import { CustomEmoji } from "../../domain/interface/customEmoji.interface";
 import { CustomMessage } from "../../domain/interface/customMessage.interface";
 import ChatService from "../../domain/service/chatService";
@@ -82,49 +75,11 @@ export default class DiscordChatService implements ChatService {
     member.roles.remove(roleId);
   }
 
-  private isInteraction(interaction: Interaction | any): interaction is Interaction {
-    return (
-      "isRepliable" in interaction && "reply" in interaction && "isButton" in interaction && "update" in interaction
-    );
-  }
-
-  private isInteractionReplyOptions(
-    interactionReplyOptions: InteractionReplyOptions | any
-  ): interactionReplyOptions is InteractionReplyOptions {
-    return "content" in interactionReplyOptions;
-  }
-
-  private isInteractionUpdateOptions(
-    interactionUpdateOptions: InteractionUpdateOptions | any
-  ): interactionUpdateOptions is InteractionUpdateOptions {
-    return "content" in interactionUpdateOptions;
-  }
-
-  async sendInteractionReply<T, K>(interaction: T, message: K): Promise<void> {
-    if (!this.isInteraction(interaction)) {
-      throw new Error("Interaction is not an interaction!");
-    }
-
-    if (!this.isInteractionReplyOptions(message)) {
-      throw new Error("Message is not an interaction reply options!");
-    }
-
-    if (!interaction.isRepliable()) throw new Error("Interaction is not repliable!");
-
+  async sendInteractionReply(interaction: InteractionInterface, message: any): Promise<void> {
     interaction.reply(message);
   }
 
-  async sendInteractionUpdate<T, K>(interaction: T, message: K): Promise<void> {
-    if (!this.isInteraction(interaction)) {
-      throw new Error("Interaction is not an interaction!");
-    }
-
-    if (!this.isInteractionUpdateOptions(message)) {
-      throw new Error("Message is not an interaction reply options!");
-    }
-
-    if (!interaction.isButton()) throw new Error("Interaction is not a button!");
-
+  async sendInteractionUpdate(interaction: InteractionInterface, message: any): Promise<void> {
     interaction.update(message);
   }
 

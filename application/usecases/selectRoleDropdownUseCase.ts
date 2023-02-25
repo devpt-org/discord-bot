@@ -1,43 +1,68 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, StringSelectMenuInteraction } from "discord.js";
+import { InteractionInterface } from "@/domain/model/interaction.interface";
 import AREA_ROLES_MAP from "../../assets/consts/areaRolesMap";
 import EXTRA_AREA_ROLES_MAP from "../../assets/consts/extraAreaRolesMap";
 import LANGUAGE_ROLES_MAP from "../../assets/consts/languageRolesMap";
+import { ActionRowBuilderInterface } from "../../domain/builder/action-row.builder.interface";
 import { CustomMessage } from "../../domain/interface/customMessage.interface";
 import ChatService from "../../domain/service/chatService";
+import LoggerService from "../../domain/service/loggerService";
 
-export default class SelectRoleDropdownUseCase {
+export default class SelectRoleDropdownUseCase<A> {
   private chatService: ChatService;
+  private loggerService: LoggerService;
+  private actionRowBuilder: ActionRowBuilderInterface<A>;
 
-  constructor({ chatService }: { chatService: ChatService }) {
+  constructor({
+    chatService,
+    loggerService,
+    actionRowBuilder,
+  }: {
+    chatService: ChatService;
+    loggerService: LoggerService;
+    actionRowBuilder: ActionRowBuilderInterface<A>;
+  }) {
     this.chatService = chatService;
+    this.loggerService = loggerService;
+    this.actionRowBuilder = actionRowBuilder;
   }
 
-  async execute(interaction: StringSelectMenuInteraction<CacheType>) {
+  async execute(interaction: InteractionInterface) {
+    const guildId = interaction.getGuildId();
+    if (!guildId) return;
+
+    const values = interaction.getValues();
+
+    if (!values || !values.length) return;
+
+    const selected = values[0];
+
+    const allowedRoles = { ...AREA_ROLES_MAP, ...LANGUAGE_ROLES_MAP, ...EXTRA_AREA_ROLES_MAP };
+    const selectedRoleMap = allowedRoles ? allowedRoles[selected] : undefined;
+
+    if (!selectedRoleMap) return;
+
     try {
-      if (!interaction.guildId) return;
-
-      const selected = interaction.values[0];
-
-      const allowedRoles = { ...AREA_ROLES_MAP, ...LANGUAGE_ROLES_MAP, ...EXTRA_AREA_ROLES_MAP };
-      const selectedRoleMap = allowedRoles ? allowedRoles[selected] : undefined;
-
-      if (!selectedRoleMap) return;
-
-      selectedRoleMap.id = await this.chatService.getRoleIdByName(interaction.guildId, selectedRoleMap.name);
+      selectedRoleMap.id = await this.chatService.getRoleIdByName(guildId, selectedRoleMap.name);
 
       if (!selectedRoleMap.id) return;
 
-      const hasRole = await this.chatService.isUserWithRoleName(interaction.guildId, interaction.user.id, [
+      const hasRole = await this.chatService.isUserWithRoleName(guildId, interaction.getUserId(), [
         selectedRoleMap.name,
       ]);
 
       if (hasRole) {
+        const row = this.actionRowBuilder
+          .setCustomId(`confirm-remove:${selectedRoleMap.id}`)
+          .setLabel("Remover")
+          .setDangerStyle()
+          .build();
+
         this.chatService.sendInteractionReply(
           interaction,
-          SelectRoleDropdownUseCase.confirmRemoveRoleMessage(selectedRoleMap.id, selectedRoleMap.name)
+          SelectRoleDropdownUseCase.confirmRemoveRoleMessage<A>(selectedRoleMap.name, row)
         );
       } else {
-        await this.chatService.addUserRole(interaction.guildId, interaction.user.id, selectedRoleMap.id);
+        await this.chatService.addUserRole(guildId, interaction.getUserId(), selectedRoleMap.id);
 
         this.chatService.sendInteractionReply(
           interaction,
@@ -45,7 +70,7 @@ export default class SelectRoleDropdownUseCase {
         );
       }
     } catch (error) {
-      console.error(error);
+      this.loggerService.log(error);
     }
   }
 
@@ -56,11 +81,7 @@ export default class SelectRoleDropdownUseCase {
     };
   }
 
-  public static confirmRemoveRoleMessage(roleId: string, roleName: string): CustomMessage {
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      new ButtonBuilder().setCustomId(`confirm-remove:${roleId}`).setLabel("Remover").setStyle(ButtonStyle.Danger)
-    );
-
+  public static confirmRemoveRoleMessage<A>(roleName: string, row: A): CustomMessage {
     return {
       content: `Só para confirmar, deseja remover a posição: ${roleName}?`,
       ephemeral: true,
