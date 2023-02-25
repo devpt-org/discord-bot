@@ -1,9 +1,8 @@
-import { InteractionInterface } from "@/domain/model/interaction.interface";
+import { ActionRowBuilderInterface, CustomMessage, InteractionInterface } from "@/domain/interface";
 import AREA_ROLES_MAP from "../../assets/consts/areaRolesMap";
 import EXTRA_AREA_ROLES_MAP from "../../assets/consts/extraAreaRolesMap";
 import LANGUAGE_ROLES_MAP from "../../assets/consts/languageRolesMap";
-import { ActionRowBuilderInterface } from "../../domain/builder/action-row.builder.interface";
-import { CustomMessage } from "../../domain/interface/customMessage.interface";
+
 import ChatService from "../../domain/service/chatService";
 import LoggerService from "../../domain/service/loggerService";
 

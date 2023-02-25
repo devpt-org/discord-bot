@@ -1,8 +1,9 @@
 import { ActionRowBuilder, Client, Events, GatewayIntentBits, GuildMember, Message, Partials } from "discord.js";
 import * as dotenv from "dotenv";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
-import { DiscordButtonActionRowBuilder } from "./domain/builder/discord-button-action-row.builder";
-import { ActionRowBuilderInterface } from "./domain/builder/action-row.builder.interface";
+import { DiscordButtonActionRowBuilder, DiscordStringSelectMenuActionRowBuilder } from "./domain/builder";
+import { ActionRowBuilderInterface, InteractionInterface } from "./domain/interface";
+import { DiscordInteraction } from "./domain/model";
 import MessageRepository from "./domain/repository/messageRepository";
 import ChannelResolver from "./domain/service/channelResolver";
 import ChatService from "./domain/service/chatService";
@@ -14,9 +15,6 @@ import FileMessageRepository from "./infrastructure/repository/fileMessageReposi
 import CodewarsKataService from "./infrastructure/service/codewarsKataService";
 import ConsoleLoggerService from "./infrastructure/service/consoleLoggerService";
 import DiscordChatService from "./infrastructure/service/discordChatService";
-import { DiscordStringSelectMenuActionRowBuilder } from "./domain/builder/discord-string-select-menu-action-row.builder";
-import { DiscordInteraction } from "./domain/model/discord-interaction";
-import { InteractionInterface } from "./domain/model/interaction.interface";
 
 dotenv.config();
 

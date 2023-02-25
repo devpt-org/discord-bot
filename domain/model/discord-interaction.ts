@@ -1,5 +1,5 @@
 import { CacheType, Interaction } from "discord.js";
-import { InteractionInterface } from "./interaction.interface";
+import { InteractionInterface } from "../interface";
 
 export class DiscordInteraction implements InteractionInterface {
   private interaction: Interaction<CacheType>;

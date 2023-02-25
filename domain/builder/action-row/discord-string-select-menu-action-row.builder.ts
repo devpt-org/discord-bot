@@ -1,5 +1,5 @@
+import { ActionRowBuilderInterface } from "@/domain/interface";
 import { ActionRowBuilder, StringSelectMenuBuilder } from "discord.js";
-import { ActionRowBuilderInterface } from "./action-row.builder.interface";
 
 export class DiscordStringSelectMenuActionRowBuilder extends ActionRowBuilderInterface<ActionRowBuilder> {
   build(): ActionRowBuilder<StringSelectMenuBuilder> {

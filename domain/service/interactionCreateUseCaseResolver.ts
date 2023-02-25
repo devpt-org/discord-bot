@@ -1,7 +1,6 @@
 import ConfirmRemoveRoleDropdownUseCase from "../../application/usecases/confirmRemoveRoleDropdownUseCase";
 import SelectRoleDropdownUseCase from "../../application/usecases/selectRoleDropdownUseCase";
-import { ActionRowBuilderInterface } from "../builder/action-row.builder.interface";
-import { InteractionInterface } from "../model/interaction.interface";
+import { ActionRowBuilderInterface, InteractionInterface } from "../interface";
 import ChatService from "./chatService";
 import LoggerService from "./loggerService";
 

@@ -1,4 +1,4 @@
-import { ActionRowBuilderInterface, ActionRowOptions } from "@/domain/builder/action-row.builder.interface";
+import { ActionRowBuilderInterface, ActionRowOptions } from "@/domain/interface/action-row.builder.interface";
 import LoggerService from "@/domain/service/loggerService";
 import ROLES_MESSAGES_MAP from "../../../assets/consts/rolesMap";
 import { RoleInterface } from "../../../assets/interfaces/roleInterface";

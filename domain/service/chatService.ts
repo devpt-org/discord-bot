@@ -1,6 +1,6 @@
 import { CustomEmoji } from "../interface/customEmoji.interface";
 import { CustomMessage } from "../interface/customMessage.interface";
-import { InteractionInterface } from "../model/interaction.interface";
+import { InteractionInterface } from "../interface/interaction.interface";
 
 export default interface ChatService {
   sendMessageToChannel(message: string | CustomMessage, channelId: string): Promise<void>;

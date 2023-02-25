@@ -8,7 +8,7 @@ import ChannelResolver from "./channelResolver";
 import KataService from "./kataService/kataService";
 import SendCodewarsLeaderboardToChannelUseCase from "../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
 import SendRolesDropdownMessageUseCase from "../../application/usecases/sendRolesDropdownMessage/sendRolesDropdownMessageUseCase";
-import { ActionRowBuilderInterface } from "../builder/action-row.builder.interface";
+import { ActionRowBuilderInterface } from "../interface/action-row.builder.interface";
 
 type CallbackFunctionVariadic = (...args: unknown[]) => void;
 

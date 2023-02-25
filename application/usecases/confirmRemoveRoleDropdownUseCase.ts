@@ -1,6 +1,5 @@
-import { InteractionInterface } from "@/domain/model/interaction.interface";
+import { CustomMessage, InteractionInterface } from "@/domain/interface";
 import LoggerService from "@/domain/service/loggerService";
-import { CustomMessage } from "../../domain/interface/customMessage.interface";
 import ChatService from "../../domain/service/chatService";
 
 export default class ConfirmRemoveRoleDropdownUseCase {

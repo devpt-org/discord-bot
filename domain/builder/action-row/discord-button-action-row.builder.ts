@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
-import { ActionRowBuilderInterface } from "./action-row.builder.interface";
+import { ActionRowBuilderInterface } from "../../interface/action-row.builder.interface";
 
 export class DiscordButtonActionRowBuilder extends ActionRowBuilderInterface<ActionRowBuilder> {
   build(): ActionRowBuilder<ButtonBuilder> {
