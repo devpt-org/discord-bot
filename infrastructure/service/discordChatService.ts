@@ -1,7 +1,5 @@
-import { InteractionInterface } from "@/domain/model/interaction.interface";
 import { ChannelType, Client, Guild, GuildMember } from "discord.js";
-import { CustomEmoji } from "../../domain/interface/customEmoji.interface";
-import { CustomMessage } from "../../domain/interface/customMessage.interface";
+import { CustomEmoji, CustomMessage, InteractionInterface } from "../../domain/interface";
 import ChatService from "../../domain/service/chatService";
 
 export default class DiscordChatService implements ChatService {

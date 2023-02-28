@@ -1,14 +1,17 @@
-import { ActionRowBuilderInterface, ActionRowOptions } from "@/domain/interface/action-row.builder.interface";
-import LoggerService from "@/domain/service/loggerService";
+import { ActionRowBuilderInterface } from "../../../domain/interface";
 import ROLES_MESSAGES_MAP from "../../../assets/consts/rolesMap";
 import { RoleInterface } from "../../../assets/interfaces/roleInterface";
+import { ActionRowOptions } from "../../../domain/builder/action-row/abstract-action-row.builder";
 import { CustomEmoji } from "../../../domain/interface/customEmoji.interface";
 import ChatService from "../../../domain/service/chatService";
+import LoggerService from "../../../domain/service/loggerService";
 import { SendRolesDropdownMessageInput } from "./sendRolesDropdownMessageInput";
 
 export default class SendRolesDropdownMessageUseCase<A> {
   private chatService: ChatService;
+
   private loggerService: LoggerService;
+
   private actionRowBuilder: ActionRowBuilderInterface<A>;
 
   constructor({

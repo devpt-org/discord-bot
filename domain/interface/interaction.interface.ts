@@ -1,4 +1,3 @@
-
 export interface InteractionInterface {
   isButton(): boolean;
 

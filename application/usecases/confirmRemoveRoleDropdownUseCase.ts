@@ -1,9 +1,10 @@
-import { CustomMessage, InteractionInterface } from "@/domain/interface";
-import LoggerService from "@/domain/service/loggerService";
+import { CustomMessage, InteractionInterface } from "../../domain/interface";
+import LoggerService from "../../domain/service/loggerService";
 import ChatService from "../../domain/service/chatService";
 
 export default class ConfirmRemoveRoleDropdownUseCase {
   private chatService: ChatService;
+
   private loggerService: LoggerService;
 
   constructor({ chatService, loggerService }: { chatService: ChatService; loggerService: LoggerService }) {

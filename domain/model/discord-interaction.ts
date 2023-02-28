@@ -9,35 +9,35 @@ export class DiscordInteraction implements InteractionInterface {
   }
 
   isButton() {
-    return this.interaction.isButton()
+    return this.interaction.isButton();
   }
 
   isStringSelectMenu() {
-    return this.interaction.isStringSelectMenu()
+    return this.interaction.isStringSelectMenu();
   }
 
   getCustomId(): string {
     if (this.interaction.isButton()) {
-      return this.interaction.customId
+      return this.interaction.customId;
     }
 
-    return '';
+    return "";
   }
 
   getGuildId(): string | null {
-    return this.interaction.guildId
+    return this.interaction.guildId;
   }
 
   getValues(): string[] {
     if (this.interaction.isStringSelectMenu()) {
-      return this.interaction.values
+      return this.interaction.values;
     }
 
-    return []
+    return [];
   }
 
   getUserId(): string {
-    return this.interaction.user.id
+    return this.interaction.user.id;
   }
 
   isRepliable() {
@@ -60,3 +60,5 @@ export class DiscordInteraction implements InteractionInterface {
     this.interaction.update(message);
   }
 }
+
+export default DiscordInteraction;

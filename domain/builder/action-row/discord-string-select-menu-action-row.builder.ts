@@ -1,7 +1,7 @@
-import { ActionRowBuilderInterface } from "@/domain/interface";
 import { ActionRowBuilder, StringSelectMenuBuilder } from "discord.js";
+import { AbstractActionRowBuilder } from "./abstract-action-row.builder";
 
-export class DiscordStringSelectMenuActionRowBuilder extends ActionRowBuilderInterface<ActionRowBuilder> {
+export class DiscordStringSelectMenuActionRowBuilder extends AbstractActionRowBuilder<ActionRowBuilder> {
   build(): ActionRowBuilder<StringSelectMenuBuilder> {
     if (!this.customId || !this.label || !this.options) {
       throw new Error("Missing required fields to build a string select menu");
@@ -19,3 +19,5 @@ export class DiscordStringSelectMenuActionRowBuilder extends ActionRowBuilderInt
     return this;
   }
 }
+
+export default DiscordStringSelectMenuActionRowBuilder;

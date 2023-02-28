@@ -6,7 +6,9 @@ import LoggerService from "./loggerService";
 
 export default class InterationCreateUseCaseResolver<A> {
   private chatService: ChatService;
+
   private loggerService: LoggerService;
+
   private actionRowBuilder: ActionRowBuilderInterface<A>;
 
   constructor({

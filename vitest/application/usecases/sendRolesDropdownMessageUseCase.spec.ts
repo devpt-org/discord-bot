@@ -3,10 +3,17 @@ import { mock, MockProxy } from "vitest-mock-extended";
 import { SendRolesDropdownMessageInput } from "../../../application/usecases/sendRolesDropdownMessage/sendRolesDropdownMessageInput";
 import SendRolesDropdownMessageUseCase from "../../../application/usecases/sendRolesDropdownMessage/sendRolesDropdownMessageUseCase";
 import ROLES_MESSAGES_MAP from "../../../assets/consts/rolesMap";
+import { ActionRowBuilderInterface } from "../../../domain/interface";
 import ChatService from "../../../domain/service/chatService";
+import LoggerService from "../../../domain/service/loggerService";
 
 describe("send roles dropdown message use case", () => {
   let mockChatService: MockProxy<ChatService>;
+  let mockLoggerService: MockProxy<LoggerService>;
+  let mockActionRowBuilder: MockProxy<ActionRowBuilderInterface<any>>;
+
+  const actionRow = {};
+
   // const mockEmoji: CustomEmoji = {
   //   id: "855861944930402342",
   //   name: AREA_ROLES_MAP.SECURITY.name,
@@ -17,9 +24,17 @@ describe("send roles dropdown message use case", () => {
 
   beforeEach(() => {
     mockChatService = mock<ChatService>();
+    mockLoggerService = mock<LoggerService>();
+    mockActionRowBuilder = mock<ActionRowBuilderInterface<any>>();
 
     mockChatService.getGuildEmojis.mockResolvedValue([]);
     mockChatService.sendMessageToChannel.mockResolvedValue();
+
+    mockActionRowBuilder.setCustomId.mockReturnThis();
+    mockActionRowBuilder.setLabel.mockReturnThis();
+    mockActionRowBuilder.setDangerStyle.mockReturnThis();
+    mockActionRowBuilder.setOptions.mockReturnThis();
+    mockActionRowBuilder.build.mockReturnValue(actionRow);
   });
 
   it("should send message with dropdown roles", async () => {
@@ -34,7 +49,11 @@ describe("send roles dropdown message use case", () => {
       memberId: "855861944930402342",
     };
 
-    await new SendRolesDropdownMessageUseCase({ chatService: mockChatService }).execute(mockInput);
+    await new SendRolesDropdownMessageUseCase({
+      chatService: mockChatService,
+      loggerService: mockLoggerService,
+      actionRowBuilder: mockActionRowBuilder,
+    }).execute(mockInput);
 
     expect(spyIsUserWithRoleName).toHaveBeenCalledTimes(1);
     expect(spyIsUserWithRoleName).toHaveBeenCalledWith("855861944930402342", "855861944930402342", allowedRoles);
@@ -42,8 +61,15 @@ describe("send roles dropdown message use case", () => {
     expect(spySendMessageToChannel).toHaveBeenCalledTimes(3);
 
     Object.values(ROLES_MESSAGES_MAP).forEach(async (roleMessage) => {
-      const message = SendRolesDropdownMessageUseCase.getRolesDropdownMessage(roleMessage, []);
-      expect(spySendMessageToChannel).toHaveBeenCalledWith(message, "855861944930402342");
+      const areaOptions = SendRolesDropdownMessageUseCase.getOptionsWithEmojis(roleMessage.OPTIONS, []);
+
+      expect(spySendMessageToChannel).toHaveBeenCalledWith(
+        {
+          content: roleMessage.content,
+          components: [actionRow],
+        },
+        "855861944930402342"
+      );
     });
   });
 
@@ -59,7 +85,11 @@ describe("send roles dropdown message use case", () => {
       memberId: "855861944930402342",
     };
 
-    await new SendRolesDropdownMessageUseCase({ chatService: mockChatService }).execute(mockInput);
+    await new SendRolesDropdownMessageUseCase({
+      chatService: mockChatService,
+      loggerService: mockLoggerService,
+      actionRowBuilder: mockActionRowBuilder,
+    }).execute(mockInput);
 
     expect(spyIsUserWithRoleName).toHaveBeenCalledTimes(1);
     expect(spyIsUserWithRoleName).toHaveBeenCalledWith("855861944930402342", "855861944930402342", allowedRoles);

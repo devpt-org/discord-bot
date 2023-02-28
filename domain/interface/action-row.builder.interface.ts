@@ -4,33 +4,21 @@ export interface ActionRowOptions {
   emoji?: string;
 }
 
-export abstract class ActionRowBuilderInterface<A> {
+export interface ActionRowBuilderInterface<A> {
   customId?: string;
   label?: string;
   style?: number;
   options?: ActionRowOptions[];
 
-  setCustomId(customId: string): this {
-    this.customId = customId;
-    return this;
-  }
+  setCustomId(customId: string): this;
 
-  setLabel(label: string): this {
-    this.label = label;
-    return this;
-  }
+  setLabel(label: string): this;
 
-  setStyle(style: number): this {
-    this.style = style;
-    return this;
-  }
+  setStyle(style: number): this;
 
-  abstract setDangerStyle(): this;
+  setDangerStyle(): this;
 
-  setOptions(options: ActionRowOptions[]): this {
-    this.options = options;
-    return this;
-  }
+  setOptions(options: ActionRowOptions[]): this;
 
-  abstract build(): A;
+  build(): A;
 }

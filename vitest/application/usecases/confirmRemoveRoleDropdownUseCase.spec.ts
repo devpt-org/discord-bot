@@ -1,25 +1,27 @@
-import { ButtonInteraction, CacheType } from "discord.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mock, MockProxy } from "vitest-mock-extended";
 import ConfirmRemoveRoleDropdownUseCase from "../../../application/usecases/confirmRemoveRoleDropdownUseCase";
+import { InteractionInterface } from "../../../domain/interface";
 import ChatService from "../../../domain/service/chatService";
+import LoggerService from "../../../domain/service/loggerService";
 
 describe("send roles dropdown message use case", () => {
   let mockChatService: MockProxy<ChatService>;
-
-  const mockInteraction = {
-    guildId: "855861944930402342",
-    customId: "confirm-remove:SECURITY",
-    user: {
-      id: "855861944930402342",
-    },
-  } as ButtonInteraction<CacheType>;
+  let mockLoggerService: MockProxy<LoggerService>;
+  let mockInteraction: MockProxy<InteractionInterface>;
 
   beforeEach(() => {
     mockChatService = mock<ChatService>();
+    mockLoggerService = mock<LoggerService>();
+    mockInteraction = mock<InteractionInterface>();
 
     mockChatService.removeUserRole.mockResolvedValue();
     mockChatService.sendInteractionUpdate.mockResolvedValue();
+
+    mockInteraction.getCustomId.mockReturnValue("confirm-remove:SECURITY");
+    mockInteraction.getGuildId.mockReturnValue("855861944930402342");
+    mockInteraction.getUserId.mockReturnValue("855861944930402342");
+    mockInteraction.update.mockResolvedValue();
   });
 
   it("should send a interaction referring selected role is removed", async () => {
@@ -28,6 +30,7 @@ describe("send roles dropdown message use case", () => {
 
     await new ConfirmRemoveRoleDropdownUseCase({
       chatService: mockChatService,
+      loggerService: mockLoggerService,
     }).execute(mockInteraction);
 
     // removeUserRole

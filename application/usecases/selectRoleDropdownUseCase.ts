@@ -1,4 +1,4 @@
-import { ActionRowBuilderInterface, CustomMessage, InteractionInterface } from "@/domain/interface";
+import { ActionRowBuilderInterface, CustomMessage, InteractionInterface } from "../../domain/interface";
 import AREA_ROLES_MAP from "../../assets/consts/areaRolesMap";
 import EXTRA_AREA_ROLES_MAP from "../../assets/consts/extraAreaRolesMap";
 import LANGUAGE_ROLES_MAP from "../../assets/consts/languageRolesMap";
@@ -8,7 +8,9 @@ import LoggerService from "../../domain/service/loggerService";
 
 export default class SelectRoleDropdownUseCase<A> {
   private chatService: ChatService;
+
   private loggerService: LoggerService;
+
   private actionRowBuilder: ActionRowBuilderInterface<A>;
 
   constructor({

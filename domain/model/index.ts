@@ -1,1 +1,1 @@
-export * from './discord-interaction';
+export * from "./discord-interaction";

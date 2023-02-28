@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
-import { ActionRowBuilderInterface } from "../../interface/action-row.builder.interface";
+import { AbstractActionRowBuilder } from "./abstract-action-row.builder";
 
-export class DiscordButtonActionRowBuilder extends ActionRowBuilderInterface<ActionRowBuilder> {
+export class DiscordButtonActionRowBuilder extends AbstractActionRowBuilder<ActionRowBuilder> {
   build(): ActionRowBuilder<ButtonBuilder> {
     if (!this.customId || !this.label || !this.style) {
       throw new Error("Missing required fields to build a button");
@@ -17,3 +17,5 @@ export class DiscordButtonActionRowBuilder extends ActionRowBuilderInterface<Act
     return this;
   }
 }
+
+export default DiscordButtonActionRowBuilder;

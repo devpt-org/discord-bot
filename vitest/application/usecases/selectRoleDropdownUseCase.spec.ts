@@ -1,27 +1,45 @@
-import { CacheType, StringSelectMenuInteraction } from "discord.js";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { mock, MockProxy } from "vitest-mock-extended";
 import SelectRoleDropdownUseCase from "../../../application/usecases/selectRoleDropdownUseCase";
 import AREA_ROLES_MAP from "../../../assets/consts/areaRolesMap";
+import { ActionRowBuilderInterface, InteractionInterface } from "../../../domain/interface";
 import ChatService from "../../../domain/service/chatService";
+import LoggerService from "../../../domain/service/loggerService";
 
 describe("select role dropdown use case", () => {
   let mockChatService: MockProxy<ChatService>;
+  let mockLoggerService: MockProxy<LoggerService>;
+  let mockInteraction: MockProxy<InteractionInterface>;
+  let mockActionRowBuilder: MockProxy<ActionRowBuilderInterface<any>>;
 
-  const mockInteraction = {
-    guildId: "855861944930402342",
-    values: ["SECURITY"],
-    user: {
-      id: "855861944930402342",
-    },
-  } as StringSelectMenuInteraction<CacheType>;
+  const actionRow = {};
+
+  // const mockInteraction = {
+  //   guildId: "855861944930402342",
+  //   values: ["SECURITY"],
+  //   user: {
+  //     id: "855861944930402342",
+  //   },
+  // } as StringSelectMenuInteraction<CacheType>;
 
   beforeEach(() => {
     mockChatService = mock<ChatService>();
+    mockLoggerService = mock<LoggerService>();
+    mockInteraction = mock<InteractionInterface>();
+    mockActionRowBuilder = mock<ActionRowBuilderInterface<any>>();
 
     mockChatService.getRoleIdByName.mockResolvedValue("855861944930402342");
     mockChatService.sendInteractionReply.mockResolvedValue();
     mockChatService.addUserRole.mockResolvedValue();
+
+    mockInteraction.getGuildId.mockReturnValue("855861944930402342");
+    mockInteraction.getValues.mockReturnValue(["SECURITY"]);
+    mockInteraction.getUserId.mockReturnValue("855861944930402342");
+
+    mockActionRowBuilder.setCustomId.mockReturnThis();
+    mockActionRowBuilder.setLabel.mockReturnThis();
+    mockActionRowBuilder.setDangerStyle.mockReturnThis();
+    mockActionRowBuilder.build.mockReturnValue(actionRow);
   });
 
   it("should send a interaction referring selected role is added", async () => {
@@ -34,6 +52,8 @@ describe("select role dropdown use case", () => {
 
     await new SelectRoleDropdownUseCase({
       chatService: mockChatService,
+      loggerService: mockLoggerService,
+      actionRowBuilder: mockActionRowBuilder,
     }).execute(mockInteraction);
 
     // getRoleIdByName
@@ -68,6 +88,8 @@ describe("select role dropdown use case", () => {
 
     await new SelectRoleDropdownUseCase({
       chatService: mockChatService,
+      loggerService: mockLoggerService,
+      actionRowBuilder: mockActionRowBuilder,
     }).execute(mockInteraction);
 
     // getRoleIdByName
@@ -87,7 +109,7 @@ describe("select role dropdown use case", () => {
     expect(spySendInteractionReply).toHaveBeenCalledTimes(1);
     expect(spySendInteractionReply).toHaveBeenCalledWith(
       mockInteraction,
-      SelectRoleDropdownUseCase.confirmRemoveRoleMessage("855861944930402342", AREA_ROLES_MAP.SECURITY.name)
+      SelectRoleDropdownUseCase.confirmRemoveRoleMessage(AREA_ROLES_MAP.SECURITY.name, actionRow)
     );
   });
 });
