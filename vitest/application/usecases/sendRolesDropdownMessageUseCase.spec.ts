@@ -61,8 +61,6 @@ describe("send roles dropdown message use case", () => {
     expect(spySendMessageToChannel).toHaveBeenCalledTimes(3);
 
     Object.values(ROLES_MESSAGES_MAP).forEach(async (roleMessage) => {
-      const areaOptions = SendRolesDropdownMessageUseCase.getOptionsWithEmojis(roleMessage.OPTIONS, []);
-
       expect(spySendMessageToChannel).toHaveBeenCalledWith(
         {
           content: roleMessage.content,
