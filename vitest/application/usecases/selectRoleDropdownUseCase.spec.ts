@@ -10,23 +10,15 @@ describe("select role dropdown use case", () => {
   let mockChatService: MockProxy<ChatService>;
   let mockLoggerService: MockProxy<LoggerService>;
   let mockInteraction: MockProxy<InteractionInterface>;
-  let mockActionRowBuilder: MockProxy<ActionRowBuilderInterface<any>>;
+  let mockActionRowBuilder: MockProxy<ActionRowBuilderInterface<unknown>>;
 
   const actionRow = {};
-
-  // const mockInteraction = {
-  //   guildId: "855861944930402342",
-  //   values: ["SECURITY"],
-  //   user: {
-  //     id: "855861944930402342",
-  //   },
-  // } as StringSelectMenuInteraction<CacheType>;
 
   beforeEach(() => {
     mockChatService = mock<ChatService>();
     mockLoggerService = mock<LoggerService>();
     mockInteraction = mock<InteractionInterface>();
-    mockActionRowBuilder = mock<ActionRowBuilderInterface<any>>();
+    mockActionRowBuilder = mock<ActionRowBuilderInterface<unknown>>();
 
     mockChatService.getRoleIdByName.mockResolvedValue("855861944930402342");
     mockChatService.sendInteractionReply.mockResolvedValue();

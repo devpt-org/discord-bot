@@ -73,11 +73,11 @@ export default class DiscordChatService implements ChatService {
     member.roles.remove(roleId);
   }
 
-  async sendInteractionReply(interaction: InteractionInterface, message: any): Promise<void> {
+  async sendInteractionReply(interaction: InteractionInterface, message: CustomMessage): Promise<void> {
     interaction.reply(message);
   }
 
-  async sendInteractionUpdate(interaction: InteractionInterface, message: any): Promise<void> {
+  async sendInteractionUpdate(interaction: InteractionInterface, message: CustomMessage): Promise<void> {
     interaction.update(message);
   }
 

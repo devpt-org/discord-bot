@@ -1,3 +1,5 @@
+import { CustomMessage } from "./customMessage.interface";
+
 export interface InteractionInterface {
   isButton(): boolean;
 
@@ -13,7 +15,7 @@ export interface InteractionInterface {
 
   isRepliable(): boolean;
 
-  reply(message: any): void;
+  reply(message: CustomMessage): void;
 
-  update(message: any): void;
+  update(message: CustomMessage): void;
 }

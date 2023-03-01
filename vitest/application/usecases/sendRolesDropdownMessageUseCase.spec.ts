@@ -10,22 +10,16 @@ import LoggerService from "../../../domain/service/loggerService";
 describe("send roles dropdown message use case", () => {
   let mockChatService: MockProxy<ChatService>;
   let mockLoggerService: MockProxy<LoggerService>;
-  let mockActionRowBuilder: MockProxy<ActionRowBuilderInterface<any>>;
+  let mockActionRowBuilder: MockProxy<ActionRowBuilderInterface<unknown>>;
 
   const actionRow = {};
-
-  // const mockEmoji: CustomEmoji = {
-  //   id: "855861944930402342",
-  //   name: AREA_ROLES_MAP.SECURITY.name,
-  //   string: `<:${AREA_ROLES_MAP.SECURITY.name}:855861944930402342>`,
-  // };
 
   const allowedRoles = ["Admin", "Moderador"];
 
   beforeEach(() => {
     mockChatService = mock<ChatService>();
     mockLoggerService = mock<LoggerService>();
-    mockActionRowBuilder = mock<ActionRowBuilderInterface<any>>();
+    mockActionRowBuilder = mock<ActionRowBuilderInterface<unknown>>();
 
     mockChatService.getGuildEmojis.mockResolvedValue([]);
     mockChatService.sendMessageToChannel.mockResolvedValue();

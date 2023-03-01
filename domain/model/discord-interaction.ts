@@ -1,5 +1,5 @@
 import { CacheType, Interaction } from "discord.js";
-import { InteractionInterface } from "../interface";
+import { CustomMessage, InteractionInterface } from "../interface";
 
 export class DiscordInteraction implements InteractionInterface {
   private interaction: Interaction<CacheType>;
@@ -44,7 +44,7 @@ export class DiscordInteraction implements InteractionInterface {
     return this.interaction.isRepliable();
   }
 
-  reply(message: any) {
+  reply(message: CustomMessage) {
     if (!this.interaction.isRepliable()) {
       throw new Error("Interaction is not repliable!");
     }
@@ -52,7 +52,7 @@ export class DiscordInteraction implements InteractionInterface {
     this.interaction.reply(message);
   }
 
-  update(message: any) {
+  update(message: CustomMessage) {
     if (!this.interaction.isButton()) {
       throw new Error("Interaction is not a button!");
     }
