@@ -44,8 +44,8 @@ export default class SendRolesDropdownMessageUseCase<A> {
 
       const emojis: CustomEmoji[] | undefined = (await this.chatService.getGuildEmojis(guildId)) || undefined;
 
-      Object.values(ROLES_MESSAGES_MAP).forEach(async (roleMessage) => {
-        const areaOptions = SendRolesDropdownMessageUseCase.getOptionsWithEmojis(roleMessage.OPTIONS, emojis);
+      Object.values(ROLES_MESSAGES_MAP).forEach((roleMessage) => {
+        const areaOptions = SendRolesDropdownMessageUseCase.getOptionsWithEmojis(roleMessage.options, emojis);
 
         const row = this.actionRowBuilder
           .setCustomId(roleMessage.id)
@@ -53,7 +53,7 @@ export default class SendRolesDropdownMessageUseCase<A> {
           .setOptions(areaOptions)
           .build();
 
-        await this.chatService.sendMessageToChannel(
+        this.chatService.sendMessageToChannel(
           {
             content: roleMessage.content,
             components: [row],
