@@ -45,7 +45,7 @@ const checkForNewPosts = async () => {
 
   const now = new Date();
 
-  const filteredPosts = lastPosts.filter((post) => {
+  const last5MinutesPosts = lastPosts.filter((post) => {
     const diff = Math.abs(now.getTime() - post.getCreatedAt().getTime());
     const minutes = Math.floor(diff / 1000 / 60);
     return minutes <= 5;
@@ -57,7 +57,7 @@ const checkForNewPosts = async () => {
     return str.replace(regex, "[$1](<$2>)");
   };
 
-  filteredPosts.forEach((post) => {
+  last5MinutesPosts.forEach((post) => {
     const title = avoidEmbedInLink(post!.getTitle());
 
     const message = `Novo post no Lemmy: **${title}** (*${post?.getAuthorName()}*)
@@ -68,7 +68,7 @@ const checkForNewPosts = async () => {
     chatService.sendMessageToChannel(message, FEED_CHANNEL_ID);
   });
 
-  loggerService.log(`Published ${filteredPosts.length} new posts!`);
+  loggerService.log(`Published ${last5MinutesPosts.length} new posts!`);
 };
 
 const setupCron = () => {
