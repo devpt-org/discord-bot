@@ -12,6 +12,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@types/cron": "^2.0.1",
+    "cron": "^2.3.1",
     "discord.js": "^13.8.0",
     "dotenv": "^16.0.1",
     "node-fetch": "^2.6.6"
