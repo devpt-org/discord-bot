@@ -1,8 +1,8 @@
 # Contribuição
 
-Antes de mais, agradecimentos por considerares participar neste projeto.
+Antes de mais, obrigado por considerares participar neste projeto.
 
-Neste documento podes encontrar uma série de linhas para contribuir neste projeto. Estas instruções não são para ser consideradas regras rígidas mas guias, esperamos que cada pessoa use bom senso em cada participação.
+Neste documento encontram-se instruções detalhadas para que possas contribuir em conformidade com a estrutura e organização do projecto. Estas instruções não são para ser consideradas regras rígidas mas sim uma orientação generalizada do que esperamos quando alguém contribui, utiliza o bom senso quando estiveres a contribuir para o projecto.
 
 #### Tabela de conteúdo
 
@@ -16,7 +16,7 @@ Neste documento podes encontrar uma série de linhas para contribuir neste proje
 
 ## Código de conduta
 
-Para participar neste projeto, esperamos que cada indivíduo siga as seguintes regras:
+Ao participares neste projecto, esperamos que tenhas em consideração as seguintes regras:
 
 - Respeito pelo próximo
 - Uso de linguagem inclusiva e acolhedora
@@ -29,7 +29,7 @@ Para participar neste projeto, esperamos que cada indivíduo siga as seguintes r
 
 ## Linguagem e versões
 
-- A linguagem utilizada é Typescript. Para instalar as dependências precisas de ter acesso a Node e NPM. A versão de Node necessária pode ser consultada no [ReadMe](README).
+- A linguagem utilizada é Typescript, e tem Node e NPM como dependências principais. As versões necessárias podem ser consultadas no [ReadMe](README).
 
 Para instalar as dependências executa o comando `npm install`.
 
