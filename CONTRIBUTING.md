@@ -9,14 +9,15 @@ Neste documento encontram-se instruções detalhadas para que possas contribuir 
 1. [Código de conduta](#código-de-conduta)
 2. [Arquitetura](#arquitetura)
 3. [Linguagem e versões](#linguagem-e-versões)
-4. [Guia de estilos](#guia-de-estilos)
+4. [Como contribuir](#como-contribuir)
+5. [Guia de estilos](#guia-de-estilos)
    - [Código](#código)
    - [Issues](#issues)
    - [Mensagens de commit](#mensagens-de-commit)
 
 ## Código de conduta
 
-Ao participares neste projecto, esperamos que tenhas em consideração as seguintes regras:
+Ao participares neste projeto, esperamos que tenhas em consideração as seguintes regras:
 
 - Respeito pelo próximo
 - Uso de linguagem inclusiva e acolhedora
@@ -32,6 +33,18 @@ Ao participares neste projecto, esperamos que tenhas em consideração as seguin
 - A linguagem utilizada é Typescript, e tem Node e NPM como dependências principais. As versões necessárias podem ser consultadas no [ReadMe](README).
 
 Para instalar as dependências executa o comando `npm install`.
+
+## Como contribuir
+
+- Encontra um issue que te sentes capaz de ajudar. Se for a primeira contribuição, issues marcados com `bom primeiro issue` são normalmente considerados bons para principiantes.
+- Faz `fork` deste repositório para a tua conta pessoal.
+- Depois podes utilizar o `git` para fazer um `clone` para a tua máquina pessoal.
+- Cria um novo branch `git checkout -b novo-nome-branch`.
+- Faz as modificações que achas necessárias.
+- Faz commit do teu código para a origem do teu `branch`.
+- Cria um `pull request` no github para que possa ser revisto pela equipa.
+- Se receberes comentários ajusta o teu código e faz novos commits.
+- Quando for aprovado, o teu código vai ser `merged` com o `branch` main.
 
 ## Guia de estilos
 
