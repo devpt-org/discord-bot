@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx pretty-quick --staged && npm exec concurrently npm:test:once npm:lint
+npx lint-staged && npm run test:once
