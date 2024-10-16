@@ -29,7 +29,7 @@ O bot está disponível no nosso discord [devPT](https://devpt.co/discord) e apr
 
 ## Guia de Contribuição
 
-Para detalhes sobre o nosso código de conduta e o processo para submeter um `pull request` neste projeto, por favor consulte o nosso [Guia de Contribuição](CONTRIBUTING).
+Para detalhes sobre o nosso código de conduta e o processo para submeter um `pull request` neste projeto, por favor consulte o nosso [Guia de Contribuição](CONTRIBUTING.md).
 
 ## Licença
 
