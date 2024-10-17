@@ -11,7 +11,7 @@ export default class LemmyContentAggregatorService implements ContentAggregatorS
       const response = await fetch(this.feedUrl);
 
       const data = await response.json();
-  
+
       unpinnedPosts = data.posts
         .filter((item: any) => !item.post.featured_community && !item.post.featured_local)
         .map(
@@ -24,7 +24,9 @@ export default class LemmyContentAggregatorService implements ContentAggregatorS
               createdAt: new Date(item.post.published),
             })
         );
-    } catch (e) {}
+    } catch (e) {
+      // Ignoring for now.
+    }
 
     return unpinnedPosts;
   }
