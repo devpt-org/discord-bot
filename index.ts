@@ -58,7 +58,7 @@ const checkForNewPosts = async () => {
   };
 
   last5MinutesPosts.forEach((post) => {
-    const title = avoidEmbedInLink(post!.getTitle());
+    const title = avoidEmbedInLink(post.getTitle());
 
     const message = `Novo post no Lemmy: **${title}** (*${post?.getAuthorName()}*)
 
