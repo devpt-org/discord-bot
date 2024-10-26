@@ -1,3 +1,5 @@
+import { promises as fs } from "fs";
+import path from "path";
 import { Context } from "../../types";
 import UseCaseNotFound from "../exception/useCaseNotFound";
 import SendMessageToChannelUseCase from "../../application/usecases/sendMessageToChannel/sendMessageToChannelUseCase";
@@ -7,8 +9,6 @@ import LoggerService from "./loggerService";
 import ChannelResolver from "./channelResolver";
 import KataService from "./kataService/kataService";
 import SendCodewarsLeaderboardToChannelUseCase from "../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
-
-type CallbackFunctionVariadic = (...args: unknown[]) => void;
 
 export default class CommandUseCaseResolver {
   private messageRepository: MessageRepository;
@@ -20,6 +20,8 @@ export default class CommandUseCaseResolver {
   private channelResolver: ChannelResolver;
 
   private kataService: KataService;
+
+  private commandMessages: Record<string, string> = {};
 
   constructor({
     messageRepository,
@@ -41,7 +43,13 @@ export default class CommandUseCaseResolver {
     this.kataService = kataService;
   }
 
-  resolveByCommand(command: string, context: Context): void {
+  private async loadCommands(): Promise<void> {
+    const filePath = path.join(__dirname, "commands.json");
+    const data = await fs.readFile(filePath, "utf-8");
+    this.commandMessages = JSON.parse(data);
+  }
+
+  async resolveByCommand(command: string, context: Context): Promise<void> {
     this.loggerService.log(`Command received: "${command}"`);
 
     const deps = {
@@ -52,28 +60,25 @@ export default class CommandUseCaseResolver {
       kataService: this.kataService,
     };
 
-    const commandUseCases: Record<string, CallbackFunctionVariadic> = {
-      "!ja": async () =>
-        new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.channelId,
-          message:
-            "Olá! Experimenta fazer a pergunta diretamente e contar o que já tentaste! Sabe mais aqui :point_right: https://dontasktoask.com/pt-pt/",
-        }),
-      "!oc": async () =>
-        new SendMessageToChannelUseCase(deps).execute({
-          channelId: context.channelId,
-          message: ":warning: Este servidor é APENAS para questões relacionadas com programação! :warning:",
-        }),
-      "!cwl": async () =>
-        new SendCodewarsLeaderboardToChannelUseCase(deps).execute({
-          channelId: context.channelId,
-        }),
-    };
-
-    if (!commandUseCases[command]) {
-      throw new UseCaseNotFound().byCommand(command);
+    if (Object.keys(this.commandMessages).length === 0) {
+      await this.loadCommands();
     }
 
-    commandUseCases[command]();
+    if (this.commandMessages[command]) {
+      new SendMessageToChannelUseCase(deps).execute({
+        channelId: context.channelId,
+        message: this.commandMessages[command],
+      });
+      return;
+    }
+
+    if (command === "!cwl") {
+      new SendCodewarsLeaderboardToChannelUseCase(deps).execute({
+        channelId: context.channelId,
+      });
+      return;
+    }
+
+    throw new UseCaseNotFound().byCommand(command);
   }
 }
