@@ -1,84 +1,44 @@
-import { promises as fs } from "fs";
-import path from "path";
-import { Context } from "../../types";
+import CodewarsLeaderboardCommand from "../../application/command/codewarsLeaderboardCommand";
+import DontAskToAskCommand from "../../application/command/dontAskToAskCommand";
+import OnlyCodeQuestionsCommand from "../../application/command/onlyCodeQuestionsCommand";
+import { Command, Context } from "../../types";
 import UseCaseNotFound from "../exception/useCaseNotFound";
-import SendMessageToChannelUseCase from "../../application/usecases/sendMessageToChannel/sendMessageToChannelUseCase";
-import MessageRepository from "../repository/messageRepository";
 import ChatService from "./chatService";
-import LoggerService from "./loggerService";
-import ChannelResolver from "./channelResolver";
 import KataService from "./kataService/kataService";
-import SendCodewarsLeaderboardToChannelUseCase from "../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
+import LoggerService from "./loggerService";
 
 export default class CommandUseCaseResolver {
-  private messageRepository: MessageRepository;
-
-  private chatService: ChatService;
+  private commands: Command[] = [];
 
   private loggerService: LoggerService;
 
-  private channelResolver: ChannelResolver;
-
-  private kataService: KataService;
-
-  private commandMessages: Record<string, string> = {};
-
   constructor({
-    messageRepository,
     chatService,
-    loggerService,
-    channelResolver,
     kataService,
+    loggerService,
   }: {
-    messageRepository: MessageRepository;
     chatService: ChatService;
-    loggerService: LoggerService;
-    channelResolver: ChannelResolver;
     kataService: KataService;
+    loggerService: LoggerService;
   }) {
-    this.messageRepository = messageRepository;
-    this.chatService = chatService;
     this.loggerService = loggerService;
-    this.channelResolver = channelResolver;
-    this.kataService = kataService;
-  }
 
-  private async loadCommands(): Promise<void> {
-    const filePath = path.join(__dirname, "commands.json");
-    const data = await fs.readFile(filePath, "utf-8");
-    this.commandMessages = JSON.parse(data);
+    this.commands.push(
+      new CodewarsLeaderboardCommand(chatService, kataService),
+      new DontAskToAskCommand(chatService),
+      new OnlyCodeQuestionsCommand(chatService)
+    );
   }
 
   async resolveByCommand(command: string, context: Context): Promise<void> {
     this.loggerService.log(`Command received: "${command}"`);
 
-    const deps = {
-      messageRepository: this.messageRepository,
-      chatService: this.chatService,
-      loggerService: this.loggerService,
-      channelResolver: this.channelResolver,
-      kataService: this.kataService,
-    };
+    const commandInstance = this.commands.find((cmd) => cmd.name === command);
 
-    if (Object.keys(this.commandMessages).length === 0) {
-      await this.loadCommands();
+    if (!commandInstance) {
+      throw new UseCaseNotFound().byCommand(command);
     }
 
-    if (this.commandMessages[command]) {
-      new SendMessageToChannelUseCase(deps).execute({
-        channelId: context.channelId,
-        message: this.commandMessages[command],
-      });
-      return;
-    }
-
-    if (command === "!cwl") {
-      new SendCodewarsLeaderboardToChannelUseCase(deps).execute({
-        channelId: context.channelId,
-      });
-      return;
-    }
-
-    throw new UseCaseNotFound().byCommand(command);
+    await commandInstance.execute(context);
   }
 }
