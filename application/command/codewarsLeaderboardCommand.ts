@@ -1,14 +1,17 @@
-import KataLeaderboardUser from "../../../domain/service/kataService/kataLeaderboardUser";
-import KataService from "../../../domain/service/kataService/kataService";
-import ChatService from "../../../domain/service/chatService";
-import { SendCodewarsLeaderboardToChannelInput } from "./sendCodewarsLeaderboardToChannelInput";
+import { SendCodewarsLeaderboardToChannelInput } from "application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelInput";
+import { Command } from "../../types";
+import KataService from "../../domain/service/kataService/kataService";
+import ChatService from "../../domain/service/chatService";
+import KataLeaderboardUser from "../../domain/service/kataService/kataLeaderboardUser";
 
-export default class SendCodewarsLeaderboardToChannelUseCase {
+export default class CodewarsLeaderboardCommand implements Command {
+  readonly name = "!cwl";
+
   private chatService: ChatService;
 
   private kataService: KataService;
 
-  constructor({ chatService, kataService }: { chatService: ChatService; kataService: KataService }) {
+  constructor(chatService: ChatService, kataService: KataService) {
     this.chatService = chatService;
     this.kataService = kataService;
   }

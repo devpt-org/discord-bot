@@ -14,6 +14,10 @@ import KataService from "./domain/service/kataService/kataService";
 import CodewarsKataService from "./infrastructure/service/codewarsKataService";
 import ContentAggregatorService from "./domain/service/contentAggregatorService/contentAggregatorService";
 import LemmyContentAggregatorService from "./infrastructure/service/lemmyContentAggregatorService";
+import CodewarsLeaderboardCommand from "./application/command/codewarsLeaderboardCommand";
+import DontAskToAskCommand from "./application/command/dontAskToAskCommand";
+import OnlyCodeQuestionsCommand from "./application/command/onlyCodeQuestionsCommand";
+import { Command } from "./types";
 
 dotenv.config();
 
@@ -29,12 +33,14 @@ const loggerService: LoggerService = new ConsoleLoggerService();
 const channelResolver: ChannelResolver = new ChannelResolver();
 const kataService: KataService = new CodewarsKataService();
 const lemmyContentAggregatorService: ContentAggregatorService = new LemmyContentAggregatorService();
+const commands: Command[] = [
+  new CodewarsLeaderboardCommand(chatService, kataService),
+  new DontAskToAskCommand(chatService),
+  new OnlyCodeQuestionsCommand(chatService),
+];
 const useCaseResolver = new CommandUseCaseResolver({
-  messageRepository,
-  chatService,
+  commands,
   loggerService,
-  channelResolver,
-  kataService,
 });
 
 const checkForNewPosts = async () => {

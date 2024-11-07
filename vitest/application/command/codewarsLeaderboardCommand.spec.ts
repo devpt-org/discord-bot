@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from "vitest";
 import { MockProxy, mock } from "vitest-mock-extended";
-import SendCodewarsLeaderboardToChannelUseCase from "../../../application/usecases/sendCodewarsLeaderboardToChannel/sendCodewarsLeaderboardToChannelUseCase";
+import CodewarsLeaderboardCommand from "../../../application/command/codewarsLeaderboardCommand";
 import ChatService from "../../../domain/service/chatService";
 import KataService from "../../../domain/service/kataService/kataService";
 import KataLeaderboardUser from "../../../domain/service/kataService/kataLeaderboardUser";
@@ -22,10 +22,7 @@ describe("send codewars leaderboard to channel use case", () => {
 
     const spy = vi.spyOn(mockChatService, "sendMessageToChannel");
 
-    await new SendCodewarsLeaderboardToChannelUseCase({
-      chatService: mockChatService,
-      kataService: mockKataService,
-    }).execute({
+    await new CodewarsLeaderboardCommand(mockChatService, mockKataService).execute({
       channelId: "855861944930402342",
     });
 
@@ -53,10 +50,7 @@ describe("send codewars leaderboard to channel use case", () => {
 
     const spy = vi.spyOn(mockChatService, "sendMessageToChannel");
 
-    await new SendCodewarsLeaderboardToChannelUseCase({
-      chatService: mockChatService,
-      kataService: mockKataService,
-    }).execute({
+    await new CodewarsLeaderboardCommand(mockChatService, mockKataService).execute({
       channelId: "855861944930402342",
     });
 
@@ -90,10 +84,7 @@ describe("send codewars leaderboard to channel use case", () => {
 
     const spy = vi.spyOn(mockChatService, "sendMessageToChannel");
 
-    await new SendCodewarsLeaderboardToChannelUseCase({
-      chatService: mockChatService,
-      kataService: mockKataService,
-    }).execute({
+    await new CodewarsLeaderboardCommand(mockChatService, mockKataService).execute({
       channelId: "855861944930402342",
     });
 
