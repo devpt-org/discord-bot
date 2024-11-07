@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
 import CommandUseCaseResolver from "../../domain/service/commandUseCaseResolver";
-import { Context } from "../../types";
+import { Command, Context } from "../../types";
 
 describe("CommandUseCaseResolver", () => {
   let commandUseCaseResolver: CommandUseCaseResolver;
@@ -8,15 +8,25 @@ describe("CommandUseCaseResolver", () => {
     channelId: "test-channel",
   };
 
+  const mockCommandJa: Command = {
+    name: "!ja",
+    execute: vi.fn(),
+  };
+
+  const mockCommandOc: Command = {
+    name: "!oc",
+    execute: vi.fn(),
+  };
+
+  const mockCommandCwl: Command = {
+    name: "!cwl",
+    execute: vi.fn(),
+  };
+
   beforeEach(async () => {
     commandUseCaseResolver = new CommandUseCaseResolver({
-      chatService: {
-        sendMessageToChannel: vi.fn(),
-      },
+      commands: [mockCommandJa, mockCommandCwl, mockCommandOc],
       loggerService: { log: vi.fn() },
-      kataService: {
-        getLeaderboard: vi.fn().mockResolvedValue([]),
-      },
     });
   });
 
