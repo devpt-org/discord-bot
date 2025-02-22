@@ -27,7 +27,12 @@
     }
   },
   "rules": {
-    "prettier/prettier": ["warn"],
+    "prettier/prettier": [
+      "warn",
+      {
+        "endOfLine": "auto"
+      }
+    ],
     "no-console": 0,
     "class-methods-use-this": 0
   }
