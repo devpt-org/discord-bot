@@ -48,10 +48,8 @@ describe("CommandUseCaseResolver", () => {
     expect(() => commandUseCaseResolver.resolveByCommand("!cwl", mockContext)).not.toThrow();
   });
 
-  it("should throw UseCaseNotFound error for unknown command", async () => {
-    await expect(commandUseCaseResolver.resolveByCommand("!unknown", mockContext)).rejects.toThrow(
-      'Use case for command "!unknown" not found'
-    );
+  it("should return false for unknown command", async () => {
+    await expect(commandUseCaseResolver.resolveByCommand("!unknown", mockContext)).resolves.toBe(false);
   });
 
   afterEach(() => {
