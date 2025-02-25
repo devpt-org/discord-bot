@@ -1,5 +1,4 @@
 import { Command, Context } from "../../types";
-import UseCaseNotFound from "../exception/useCaseNotFound";
 import LoggerService from "./loggerService";
 
 export default class CommandUseCaseResolver {
@@ -13,15 +12,17 @@ export default class CommandUseCaseResolver {
     this.commands = commands;
   }
 
-  async resolveByCommand(command: string, context: Context): Promise<void> {
+  async resolveByCommand(command: string, context: Context): Promise<boolean> {
     this.loggerService.log(`Command received: "${command}"`);
 
     const commandInstance = this.commands.find((cmd) => cmd.name === command);
 
     if (!commandInstance) {
-      throw new UseCaseNotFound().byCommand(command);
+      this.loggerService.log(`Command not found: "${command}"`);
+      return false;
     }
 
     await commandInstance.execute(context);
+    return true;
   }
 }

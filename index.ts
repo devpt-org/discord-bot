@@ -10,13 +10,16 @@ import MessageRepository from "./domain/repository/messageRepository";
 import LoggerService from "./domain/service/loggerService";
 import CommandUseCaseResolver from "./domain/service/commandUseCaseResolver";
 import ChannelResolver from "./domain/service/channelResolver";
+import InteractionResolver from "./domain/service/interactionResolver";
 import KataService from "./domain/service/kataService/kataService";
 import CodewarsKataService from "./infrastructure/service/codewarsKataService";
 import ContentAggregatorService from "./domain/service/contentAggregatorService/contentAggregatorService";
 import LemmyContentAggregatorService from "./infrastructure/service/lemmyContentAggregatorService";
+import QuestionTrackingService from "./domain/service/questionTrackingService";
 import CodewarsLeaderboardCommand from "./application/command/codewarsLeaderboardCommand";
 import DontAskToAskCommand from "./application/command/dontAskToAskCommand";
 import OnlyCodeQuestionsCommand from "./application/command/onlyCodeQuestionsCommand";
+import AnonymousQuestionCommand from "./application/command/anonymousQuestionCommand";
 import { Command } from "./types";
 
 dotenv.config();
@@ -24,23 +27,38 @@ dotenv.config();
 const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.DIRECT_MESSAGES,
+  ],
+  partials: ["CHANNEL"],
 });
 
 const messageRepository: MessageRepository = new FileMessageRepository();
 const chatService: ChatService = new DiscordChatService(client);
 const loggerService: LoggerService = new ConsoleLoggerService();
 const channelResolver: ChannelResolver = new ChannelResolver();
+const questionTrackingService: QuestionTrackingService = new QuestionTrackingService();
 const kataService: KataService = new CodewarsKataService();
 const lemmyContentAggregatorService: ContentAggregatorService = new LemmyContentAggregatorService();
 const commands: Command[] = [
   new CodewarsLeaderboardCommand(chatService, kataService),
   new DontAskToAskCommand(chatService),
   new OnlyCodeQuestionsCommand(chatService),
+  new AnonymousQuestionCommand(chatService, loggerService, channelResolver, questionTrackingService),
 ];
 const useCaseResolver = new CommandUseCaseResolver({
   commands,
   loggerService,
+});
+
+const interactionResolver = new InteractionResolver({
+  chatService,
+  loggerService,
+  channelResolver,
+  questionTrackingService,
 });
 
 const checkForNewPosts = async () => {
@@ -105,18 +123,25 @@ client.on("guildMemberAdd", (member: GuildMember) =>
   }).execute(member)
 );
 
-client.on("messageCreate", (messages: Message) => {
+client.on("messageCreate", (message: Message) => {
   const COMMAND_PREFIX = "!";
 
-  if (!messages.content.startsWith(COMMAND_PREFIX)) return;
+  if (!message.content.startsWith(COMMAND_PREFIX)) return;
 
-  const command = messages.content.split(" ")[0];
+  const command = message.content.split(" ")[0];
 
   try {
     useCaseResolver.resolveByCommand(command, {
-      channelId: messages.channel.id,
+      channelId: message.channel.id,
+      message,
     });
   } catch (error: unknown) {
     loggerService.log(error);
+  }
+});
+
+client.on("interactionCreate", async (interaction) => {
+  if (interaction.isButton()) {
+    await interactionResolver.resolveButtonInteraction(interaction);
   }
 });
