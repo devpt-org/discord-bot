@@ -20,7 +20,7 @@ export default class OnlyCodeQuestionsCommand implements Command {
     const content = userId ? `<@${userId}>` : undefined;
 
     const embed = new EmbedBuilder()
-      .setTitle("🚫 Canal Exclusivo para Programação")
+      .setTitle("🚫 Servidor Exclusivo para Programação")
       .setDescription("Este servidor é **APENAS** para questões relacionadas com **programação**!")
       .setColor(0xFF0000)
       .setFooter({ text: "Por favor mantém o foco no tema certo." })
