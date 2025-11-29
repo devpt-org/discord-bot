@@ -1,4 +1,4 @@
-import { GuildMember, Message, Client, Intents } from "discord.js";
+import { Client, Events, GatewayIntentBits, GuildMember, Message } from "discord.js";
 import * as dotenv from "dotenv";
 import { CronJob } from "cron";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
@@ -24,7 +24,12 @@ dotenv.config();
 const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
 });
 
 const messageRepository: MessageRepository = new FileMessageRepository();
@@ -89,7 +94,7 @@ const setupCron = () => {
   );
 };
 
-client.once("ready", () => {
+client.once(Events.ClientReady, () => {
   loggerService.log("Ready!");
   setupCron();
 });
@@ -105,7 +110,7 @@ client.on("guildMemberAdd", (member: GuildMember) =>
   }).execute(member)
 );
 
-client.on("messageCreate", (messages: Message) => {
+client.on(Events.MessageCreate, (messages: Message) => {
   const COMMAND_PREFIX = "!";
 
   if (!messages.content.startsWith(COMMAND_PREFIX)) return;
