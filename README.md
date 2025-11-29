@@ -2,7 +2,7 @@
 
 ![](https://avatars.githubusercontent.com/u/79173787?s=200&v=4)
 
-[![language](https://img.shields.io/badge/language-TypeScript-3178C6)](https://www.typescriptlang.org/) [![node_major_version](https://img.shields.io/badge/node_major_version-18-5fa04e)](https://nodejs.org/en) [![license](https://img.shields.io/github/license/devpt-org/discord-bot)](LICENSE)
+[![language](https://img.shields.io/badge/language-TypeScript-3178C6)](https://www.typescriptlang.org/) [![node_major_version](https://img.shields.io/badge/node_major_version-20-5fa04e)](https://nodejs.org/en) [![license](https://img.shields.io/github/license/devpt-org/discord-bot)](LICENSE)
 
 ## Descrição
 

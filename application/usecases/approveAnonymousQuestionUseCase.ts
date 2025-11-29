@@ -1,4 +1,4 @@
-import { ButtonInteraction, MessageEmbed } from "discord.js";
+import { ButtonInteraction, EmbedBuilder } from "discord.js";
 import ChatService from "../../domain/service/chatService";
 import ChannelResolver from "../../domain/service/channelResolver";
 import LoggerService from "../../domain/service/loggerService";
@@ -71,7 +71,7 @@ export default class ApproveAnonymousQuestionUseCase {
     }
 
     try {
-      const updatedEmbed = new MessageEmbed()
+      const updatedEmbed = new EmbedBuilder()
         .setTitle("Pergunta Anónima Aprovada")
         .setDescription(questionContent)
         .setColor(0x00ff00) // Green

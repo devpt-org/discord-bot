@@ -1,4 +1,4 @@
-import { ButtonInteraction, MessageEmbed } from "discord.js";
+import { ButtonInteraction, EmbedBuilder } from "discord.js";
 import ChatService from "../../domain/service/chatService";
 import LoggerService from "../../domain/service/loggerService";
 import QuestionTrackingService from "../../domain/service/questionTrackingService";
@@ -52,7 +52,7 @@ export default class RejectAnonymousQuestionUseCase {
     }
 
     try {
-      const updatedEmbed = new MessageEmbed()
+      const updatedEmbed = new EmbedBuilder()
         .setTitle("Pergunta Anónima Rejeitada")
         .setDescription(questionContent)
         .setColor(0xff0000) // Red
