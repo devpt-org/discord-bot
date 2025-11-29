@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, TextBasedChannel } from "discord.js";
 import ChatService from "../../domain/service/chatService";
 
 export default class DiscordChatService implements ChatService {
@@ -11,10 +11,11 @@ export default class DiscordChatService implements ChatService {
       throw new Error(`Channel with id ${channelId} not found!`);
     }
 
-    if (!channel.isText()) {
+    if (!channel.isTextBased() || !("send" in channel)) {
       throw new Error(`Channel with id ${channelId} is not a text channel!`);
     }
 
-    channel.send(message);
+    const textChannel = channel as TextBasedChannel & { send: (content: string) => Promise<unknown> };
+    await textChannel.send(message);
   }
 }
