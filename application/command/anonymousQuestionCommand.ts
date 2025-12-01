@@ -35,7 +35,7 @@ export default class AnonymousQuestionCommand implements Command {
 
     const { message } = context;
 
-    const isDM = message.channel.type === "DM";
+    const isDM = !message.inGuild();
 
     if (!isDM) {
       this.chatService.sendMessageToChannel("Este comando só pode ser usado em mensagens diretas.", context.channelId);
@@ -47,7 +47,7 @@ export default class AnonymousQuestionCommand implements Command {
     if (!questionContent) {
       this.chatService.sendMessageToChannel(
         "Por favor, forneçe uma pergunta após o comando. Exemplo: `!pergunta Como faço para...`",
-        message.channel.id
+        message.channelId
       );
       return;
     }
@@ -63,7 +63,7 @@ export default class AnonymousQuestionCommand implements Command {
       userId: message.author.id,
       username: message.author.username,
       questionContent,
-      dmChannelId: message.channel.id,
+      dmChannelId: message.channelId,
     });
   }
 }

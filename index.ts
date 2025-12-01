@@ -1,4 +1,4 @@
-import { GuildMember, Message, Client, Intents } from "discord.js";
+import { Client, Events, GatewayIntentBits, GuildMember, Message, Partials } from "discord.js";
 import * as dotenv from "dotenv";
 import { CronJob } from "cron";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
@@ -28,12 +28,13 @@ const { DISCORD_TOKEN } = process.env;
 
 const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.DIRECT_MESSAGES,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.MessageContent,
   ],
-  partials: ["CHANNEL"],
+  partials: [Partials.Channel],
 });
 
 const messageRepository: MessageRepository = new FileMessageRepository();
@@ -107,14 +108,14 @@ const setupCron = () => {
   );
 };
 
-client.once("ready", () => {
+client.once(Events.ClientReady, () => {
   loggerService.log("Ready!");
   setupCron();
 });
 
 client.login(DISCORD_TOKEN);
 
-client.on("guildMemberAdd", (member: GuildMember) =>
+client.on(Events.GuildMemberAdd, (member: GuildMember) =>
   new SendWelcomeMessageUseCase({
     messageRepository,
     chatService,
@@ -123,7 +124,7 @@ client.on("guildMemberAdd", (member: GuildMember) =>
   }).execute(member)
 );
 
-client.on("messageCreate", (message: Message) => {
+client.on(Events.MessageCreate, async (message: Message) => {
   const COMMAND_PREFIX = "!";
 
   if (!message.content.startsWith(COMMAND_PREFIX)) return;
@@ -131,7 +132,7 @@ client.on("messageCreate", (message: Message) => {
   const command = message.content.split(" ")[0];
 
   try {
-    useCaseResolver.resolveByCommand(command, {
+    await useCaseResolver.resolveByCommand(command, {
       channelId: message.channel.id,
       message,
     });
@@ -140,7 +141,7 @@ client.on("messageCreate", (message: Message) => {
   }
 });
 
-client.on("interactionCreate", async (interaction) => {
+client.on(Events.InteractionCreate, async (interaction) => {
   if (interaction.isButton()) {
     await interactionResolver.resolveButtonInteraction(interaction);
   }
