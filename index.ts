@@ -4,6 +4,7 @@ import { CronJob } from "cron";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
 import FileMessageRepository from "./infrastructure/repository/fileMessageRepository";
 import ChatService from "./domain/service/chatService";
+import EmbedFriendlyLinkService from "./domain/service/embedFriendlyLinkService";
 import DiscordChatService from "./infrastructure/service/discordChatService";
 import ConsoleLoggerService from "./infrastructure/service/consoleLoggerService";
 import MessageRepository from "./domain/repository/messageRepository";
@@ -21,6 +22,7 @@ import DontAskToAskCommand from "./application/command/dontAskToAskCommand";
 import OnlyCodeQuestionsCommand from "./application/command/onlyCodeQuestionsCommand";
 import AnonymousQuestionCommand from "./application/command/anonymousQuestionCommand";
 import { Command } from "./types";
+import DiscordEmbedFriendlyLinkService from "./infrastructure/service/embedFriendlyLinkService";
 
 dotenv.config();
 
@@ -39,6 +41,7 @@ const client = new Client({
 
 const messageRepository: MessageRepository = new FileMessageRepository();
 const chatService: ChatService = new DiscordChatService(client);
+const embedFriendlyService: EmbedFriendlyLinkService = new DiscordEmbedFriendlyLinkService();
 const loggerService: LoggerService = new ConsoleLoggerService();
 const channelResolver: ChannelResolver = new ChannelResolver();
 const questionTrackingService: QuestionTrackingService = new QuestionTrackingService();
@@ -139,6 +142,16 @@ client.on(Events.MessageCreate, async (message: Message) => {
   } catch (error: unknown) {
     loggerService.log(error);
   }
+});
+
+client.on(Events.MessageCreate, async (message: Message) => {
+  if (message.author.bot) return;
+
+  const embedFriendlyLink = await embedFriendlyService.replaceLinkWithEmbedFriendly(message.content);
+
+  if (!embedFriendlyLink) return;
+
+  await chatService.sendMessageToChannel(embedFriendlyLink, message.channelId);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
