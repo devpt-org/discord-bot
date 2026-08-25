@@ -151,6 +151,7 @@ client.on(Events.MessageCreate, async (message: Message) => {
 
   if (!embedFriendlyLink) return;
 
+  await message.suppressEmbeds(true);
   await chatService.sendMessageToChannel(embedFriendlyLink, message.channelId);
 });
 
