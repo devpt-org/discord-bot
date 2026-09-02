@@ -5,6 +5,7 @@ const fallbackChannelIds: Record<ChannelSlug, string> = {
   [ChannelSlug.JOBS]: "876826576749215744",
   [ChannelSlug.MODERATION]: "987719981443723266",
   [ChannelSlug.QUESTIONS]: "1065751368809324634",
+  [ChannelSlug.HONEY_POT]: "",
 };
 
 export default class ChannelResolver {
