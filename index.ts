@@ -1,4 +1,4 @@
-import { Client, Events, GatewayIntentBits, GuildMember, Message, Partials } from "discord.js";
+import { Client, Events, GatewayIntentBits, Guild, GuildMember, Message, Partials } from "discord.js";
 import * as dotenv from "dotenv";
 import { CronJob } from "cron";
 import SendWelcomeMessageUseCase from "./application/usecases/sendWelcomeMessageUseCase";
@@ -20,7 +20,7 @@ import CodewarsLeaderboardCommand from "./application/command/codewarsLeaderboar
 import DontAskToAskCommand from "./application/command/dontAskToAskCommand";
 import OnlyCodeQuestionsCommand from "./application/command/onlyCodeQuestionsCommand";
 import AnonymousQuestionCommand from "./application/command/anonymousQuestionCommand";
-import { Command } from "./types";
+import { ChannelSlug, Command } from "./types";
 
 dotenv.config();
 
@@ -61,6 +61,8 @@ const interactionResolver = new InteractionResolver({
   channelResolver,
   questionTrackingService,
 });
+
+const honeyPotChannelId = channelResolver.getBySlug(ChannelSlug.HONEY_POT);
 
 const checkForNewPosts = async () => {
   loggerService.log("Checking for new posts on content aggregator...");
@@ -135,6 +137,22 @@ client.on(Events.MessageCreate, async (message: Message) => {
     await useCaseResolver.resolveByCommand(command, {
       channelId: message.channel.id,
       message,
+    });
+  } catch (error: unknown) {
+    loggerService.log(error);
+  }
+});
+
+client.on(Events.MessageCreate, async (message: Message) => {
+  if (message.channelId !== honeyPotChannelId) return;
+  if (message.author.bot) return;
+  if (!message.member) return;
+  try {
+    loggerService.log(`Honeypot triggered by ${message.author.username} (${message.author.id})`);
+
+    await message.member?.ban({
+      reason: "Triggered honeypot channel",
+      deleteMessageSeconds: 60,
     });
   } catch (error: unknown) {
     loggerService.log(error);

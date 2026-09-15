@@ -14,6 +14,7 @@ export enum ChannelSlug {
   JOBS = "JOBS",
   MODERATION = "MODERATION",
   QUESTIONS = "QUESTIONS",
+  HONEY_POT = "HONEY_POT",
 }
 
 export type CommandMessages = {
