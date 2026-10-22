@@ -1,12 +1,13 @@
 FROM debian:bullseye as builder
 
-ARG NODE_VERSION=16.14.0
-
 RUN apt-get update; apt install -y curl
 RUN curl https://get.volta.sh | bash
 ENV VOLTA_HOME /root/.volta
 ENV PATH /root/.volta/bin:$PATH
-RUN volta install node@${NODE_VERSION}
+
+# Install the same Node version used for local development
+COPY .nvmrc /tmp/.nvmrc
+RUN volta install node@$(cat /tmp/.nvmrc)
 
 #######################################################################
 
